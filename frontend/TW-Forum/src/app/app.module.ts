@@ -10,12 +10,15 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatToolbarModule} from '@angular/material/toolbar'
 import {MatIconModule} from '@angular/material/icon'
 import {MatSidenavModule} from '@angular/material/sidenav';
-import { HomeComponent } from './home/home.component'
+import {MatListModule} from '@angular/material/list';
+import { HomeComponent } from './home/home.component';
+import { TagComponent } from './tag/tag.component'
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent
+    HomeComponent,
+    TagComponent
   ],
   imports: [
     BrowserModule,
@@ -26,7 +29,8 @@ import { HomeComponent } from './home/home.component'
     MatButtonModule,
     MatToolbarModule,
     MatIconModule,
-    MatSidenavModule
+    MatSidenavModule,
+    MatListModule
   ],
   providers: [],
   bootstrap: [AppComponent]
