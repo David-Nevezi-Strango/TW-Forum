@@ -12,6 +12,7 @@ export class TagComponent implements OnInit {
   constructor(private tagService:TagService) { }
 
   tags:Tag[]=[]
+  selected!:Tag
 
   ngOnInit(): void {
     this.getTags();

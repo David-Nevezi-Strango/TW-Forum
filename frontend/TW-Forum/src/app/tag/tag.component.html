@@ -1,8 +1,8 @@
 <mat-card class="listcontainer">
-    <mat-selection-list [multiple]="false">
-        <mat-list-option *ngFor="let tag of tags" [value]="tag">
-            {{tag}}
-        </mat-list-option>
-    </mat-selection-list>
+    <mat-list>
+        <mat-list-item *ngFor="let tag of tags">
+            <a href="">{{tag.tag_name}}</a>
+        </mat-list-item>
+    </mat-list>
 
 </mat-card>  
