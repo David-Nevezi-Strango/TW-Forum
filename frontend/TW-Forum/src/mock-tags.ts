@@ -1,4 +1,4 @@
-import { Tag } from "./tag";
+import { Tag } from "./models/tag";
 
 export const TAGS:Tag[]=[
     {tag_id:1,tag_name:'UVT'},
