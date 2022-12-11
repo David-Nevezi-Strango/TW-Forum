@@ -12,13 +12,15 @@ import {MatIconModule} from '@angular/material/icon'
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
 import { HomeComponent } from './home/home.component';
-import { TagComponent } from './tag/tag.component'
+import { TagComponent } from './tag/tag.component';
+import { DiscussionComponent } from './discussion/discussion.component'
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    TagComponent
+    TagComponent,
+    DiscussionComponent
   ],
   imports: [
     BrowserModule,
