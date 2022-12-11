@@ -1,12 +1,5 @@
-aniso8601
-click
-Flask
-Flask-RESTful
+flask
+pyjwt
+datetime
+uuid
 Flask-SQLAlchemy
-itsdangerous
-Jinja2
-MarkupSafe
-pytz
-six
-SQLAlchemy
-Werkzeug
