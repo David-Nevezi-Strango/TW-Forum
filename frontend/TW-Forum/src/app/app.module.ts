@@ -8,10 +8,19 @@ import {MatCardModule} from '@angular/material/card';
 import { MatSliderModule } from '@angular/material/slider';
 import {MatButtonModule} from '@angular/material/button';
 import {MatToolbarModule} from '@angular/material/toolbar'
+import {MatIconModule} from '@angular/material/icon'
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatListModule} from '@angular/material/list';
+import { HomeComponent } from './home/home.component';
+import { TagComponent } from './tag/tag.component';
+import { DiscussionComponent } from './discussion/discussion.component'
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    HomeComponent,
+    TagComponent,
+    DiscussionComponent
   ],
   imports: [
     BrowserModule,
@@ -20,7 +29,10 @@ import {MatToolbarModule} from '@angular/material/toolbar'
     MatCardModule,
     MatSliderModule,
     MatButtonModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatIconModule,
+    MatSidenavModule,
+    MatListModule
   ],
   providers: [],
   bootstrap: [AppComponent]

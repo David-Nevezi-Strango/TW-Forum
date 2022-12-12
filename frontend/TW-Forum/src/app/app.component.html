@@ -1,3 +1,20 @@
-<mat-toolbar color="primary">
-  <span>Student Forum</span>
-</mat-toolbar>
+<html>
+  <mat-toolbar color="primary" class="fix">
+    <button mat-button (click)="sidenav.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span>Student Forum</span>
+  </mat-toolbar> 
+
+  <mat-sidenav-container>
+    <mat-sidenav #sidenav mode="push" [(opened)]="opened">
+      <span style="margin-left:10px">Sidenav content</span>
+    </mat-sidenav>
+
+    <mat-sidenav-content style="background-color: #B4CFCA;">
+
+      <router-outlet></router-outlet>
+      
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</html>
