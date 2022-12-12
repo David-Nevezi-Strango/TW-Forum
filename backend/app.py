@@ -36,10 +36,11 @@ class Preferences(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     tag_id = db.Column(db.Integer, db.ForeignKey('tags.tag_id'), nullable=False)
 
-class Discussion(db.Model):
+class Discussions(db.Model):
     discussion_id = db.Column(db.Integer, primary_key=True)
     tag_id = db.Column(db.Integer, db.ForeignKey('tags.tag_id'), nullable=False)
     title = db.Column(db.String(50), nullable=False)
+    description = db.Column(db.String(500), nullable=False)
 
 class Comments(db.Model):
     comment_id = db.Column(db.Integer, primary_key=True)
@@ -87,17 +88,30 @@ def home():
         result.append(tag_data)
     return jsonify({'message': result})
 
+@app.route("/discussions/<tag_id>", methods=['GET'])
+def get_discussionlist_by_tag(tag_id):
+    discussions = Discussions.query.filter_by(tag_id=tag_id).all()
+    result = []
+    for discussion in discussions:
+        discussion_data = {}
+        discussion_data['discussion_id'] = discussion.discussion_id
+        discussion_data['tag_id'] = discussion.tag_id
+        discussion_data['title'] = discussion.title
+        discussion_data['description'] = discussion.description
+        result.append(discussion_data)
+    return jsonify({'message': result})
+
 @app.route("/discussion/<discussion_id>", methods=['GET'])
 #@token_required
-def get_discussion(discussion_id):
-    discussion = Discussion.query.filter_by(discussion_id=discussion_id).first()
+def get_discussion_by_id(discussion_id):
+    discussion = Discussions.query.filter_by(discussion_id=discussion_id).first()
     if not discussion:
         return jsonify({'message': 'discussion does not exist'})
     result = {}
     result['discussion_id'] = discussion.discussion_id
     result['tag_id'] = discussion.tag_id
     result['title'] = discussion.title
-
+    result['description'] = discussion.description
     return jsonify({'discussion': result})
 
 if __name__ == '__main__':
