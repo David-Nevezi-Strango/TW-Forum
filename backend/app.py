@@ -36,7 +36,7 @@ class Preferences(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     tag_id = db.Column(db.Integer, db.ForeignKey('tags.tag_id'), nullable=False)
 
-class Discussion(db.Model):
+class Discussions(db.Model):
     discussion_id = db.Column(db.Integer, primary_key=True)
     tag_id = db.Column(db.Integer, db.ForeignKey('tags.tag_id'), nullable=False)
     title = db.Column(db.String(50), nullable=False)
@@ -90,7 +90,7 @@ def home():
 
 @app.route("/discussions/<tag_id>", methods=['GET'])
 def get_discussionlist_by_tag(tag_id):
-    discussions = Discussion.query.filter_by(tag_id=tag_id).all()
+    discussions = Discussions.query.filter_by(tag_id=tag_id).all()
     result = []
     for discussion in discussions:
         discussion_data = {}
@@ -104,7 +104,7 @@ def get_discussionlist_by_tag(tag_id):
 @app.route("/discussion/<discussion_id>", methods=['GET'])
 #@token_required
 def get_discussion_by_id(discussion_id):
-    discussion = Discussion.query.filter_by(discussion_id=discussion_id).first()
+    discussion = Discussions.query.filter_by(discussion_id=discussion_id).first()
     if not discussion:
         return jsonify({'message': 'discussion does not exist'})
     result = {}
