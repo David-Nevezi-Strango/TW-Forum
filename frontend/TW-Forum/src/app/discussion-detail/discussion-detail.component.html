@@ -1,4 +1,4 @@
-<mat-card class="listcontainer">
+<mat-card class="mainpost">
     <mat-card-header>
     <div mat-card-avatar class="example-header-image"></div>
       <mat-card-title>{{this.discussion?.title}}</mat-card-title>
@@ -10,4 +10,17 @@
         </p>
       </mat-card-content>
   </mat-card>
-  
+
+<div *ngFor="let comment of comments">
+    <mat-card class="comment">
+        <mat-card-header>
+            <div mat-card-avatar class="example-header-image"></div>
+            <mat-card-subtitle>Start</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <p>
+              {{comment.text}}
+            </p>
+          </mat-card-content>
+    </mat-card>
+</div>
