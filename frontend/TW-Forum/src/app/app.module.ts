@@ -11,16 +11,19 @@ import {MatToolbarModule} from '@angular/material/toolbar'
 import {MatIconModule} from '@angular/material/icon'
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
+import { MatDividerModule } from '@angular/material/divider';
 import { HomeComponent } from './home/home.component';
 import { TagComponent } from './tag/tag.component';
 import { DiscussionComponent } from './discussion/discussion.component'
+import { DiscussionDetailComponent } from './discussion-detail/discussion-detail.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     TagComponent,
-    DiscussionComponent
+    DiscussionComponent,
+    DiscussionDetailComponent
   ],
   imports: [
     BrowserModule,
@@ -32,7 +35,8 @@ import { DiscussionComponent } from './discussion/discussion.component'
     MatToolbarModule,
     MatIconModule,
     MatSidenavModule,
-    MatListModule
+    MatListModule,
+    MatDividerModule
   ],
   providers: [],
   bootstrap: [AppComponent]
