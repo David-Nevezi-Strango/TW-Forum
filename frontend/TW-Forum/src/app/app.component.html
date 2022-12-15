@@ -6,9 +6,12 @@
     <span>Student Forum</span>
   </mat-toolbar> 
 
-  <mat-sidenav-container>
-    <mat-sidenav #sidenav mode="push" [(opened)]="opened">
-      <span style="margin-left:10px">Sidenav content</span>
+  <mat-sidenav-container style="width:100%;height:100%">
+    <mat-sidenav #sidenav mode="push" [(opened)]="opened"  class="sidenav">
+
+      <a routerLink="home">
+        <button mat-raised-button color="primary" class="sidenav-button"><mat-icon>home</mat-icon>Home</button>
+      </a>
     </mat-sidenav>
 
     <mat-sidenav-content style="background-color: #B4CFCA;">
@@ -17,4 +20,5 @@
       
     </mat-sidenav-content>
   </mat-sidenav-container>
+
 </html>

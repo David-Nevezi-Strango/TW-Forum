@@ -19,4 +19,13 @@ export class DiscussionService {
     }
     return of(result)
   }
+
+  getDiscussion(id:number):Observable<Discussion>{
+    for(let d of DISCUSSIONS){
+      if(d.discussion_id==id){
+        return of(d);
+      }
+    }
+    return of(DISCUSSIONS[1])
+  }
 }
