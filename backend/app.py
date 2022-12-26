@@ -18,7 +18,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:root1root!@localho
 #engine = create_engine("mysql+pymysql://root:root1root!@localhost:3306/discussion_forum")
 
 #db = scoped_session(sessionmaker(bind=engine))
-CORS(app)
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 db = SQLAlchemy(app)
 
 
