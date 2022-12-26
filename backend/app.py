@@ -18,7 +18,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:root1root!@localho
 #engine = create_engine("mysql+pymysql://root:root1root!@localhost:3306/discussion_forum")
 
 #db = scoped_session(sessionmaker(bind=engine))
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
 db = SQLAlchemy(app)
 
 
@@ -50,6 +50,13 @@ class Comments(db.Model):
     discussion_id = db.Column(db.Integer, db.ForeignKey('discussion.discussion_id'), nullable=False)
     date = db.Column(db.Date, nullable=False)
     text = db.Column(db.String(500), nullable=False)
+
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+    return response
 
 def token_required(f):
    @wraps(f)
