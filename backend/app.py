@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, make_response, request
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import asc
+from flask_cors import CORS
 from functools import wraps
 #import uuid
 import jwt
@@ -16,7 +18,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:root1root!@localho
 #engine = create_engine("mysql+pymysql://root:root1root!@localhost:3306/discussion_forum")
 
 #db = scoped_session(sessionmaker(bind=engine))
-
+CORS(app)
 db = SQLAlchemy(app)
 
 
@@ -76,8 +78,9 @@ def login_user():
        return jsonify({'token' : token})
    return make_response('could not verify',  401, {'Authentication': '"login required"'})
 
-@app.route("/", methods=['GET'])
-@app.route("/home", methods=['GET'])
+#@app.route("/", methods=['GET'])
+#@app.route("/home", methods=['GET'])
+@app.route("/tags", methods=['GET'])
 def home():
     tags = Tags.query.all()
     result = []
@@ -86,33 +89,73 @@ def home():
         tag_data['tag_id'] = tag.tag_id
         tag_data['tag_name'] = tag.tag_name
         result.append(tag_data)
-    return jsonify({'message': result})
+    return jsonify(result)
 
-@app.route("/discussions/<tag_id>", methods=['GET'])
+@app.route("/discussions/<tag_id>", methods=['GET', 'POST'])
 def get_discussionlist_by_tag(tag_id):
-    discussions = Discussions.query.filter_by(tag_id=tag_id).all()
-    result = []
-    for discussion in discussions:
-        discussion_data = {}
-        discussion_data['discussion_id'] = discussion.discussion_id
-        discussion_data['tag_id'] = discussion.tag_id
-        discussion_data['title'] = discussion.title
-        discussion_data['description'] = discussion.description
-        result.append(discussion_data)
-    return jsonify({'message': result})
+    if request.method == 'POST':
+        discussion = request.form['discussion']
+        new_discussion = Discussions(
+            tag_id=discussion['tag_id'],
+            title=discussion['title'],
+            description=discussion['description']
+        )
+        db.session.add(new_discussion)
+        db.session.commit()
+        return jsonify({'message': 'comment created'})#redirect?
+    else:
+        discussions = Discussions.query.filter_by(tag_id=tag_id).all()
+        result = []
+        for discussion in discussions:
+            discussion_data = {}
+            discussion_data['discussion_id'] = discussion.discussion_id
+            discussion_data['tag_id'] = discussion.tag_id
+            discussion_data['title'] = discussion.title
+            discussion_data['description'] = discussion.description
+            result.append(discussion_data)
+        return jsonify(result)
 
-@app.route("/discussion/<discussion_id>", methods=['GET'])
+@app.route("/discussion/<discussion_id>", methods=['GET', 'POST'])
 #@token_required
 def get_discussion_by_id(discussion_id):
-    discussion = Discussions.query.filter_by(discussion_id=discussion_id).first()
-    if not discussion:
-        return jsonify({'message': 'discussion does not exist'})
-    result = {}
-    result['discussion_id'] = discussion.discussion_id
-    result['tag_id'] = discussion.tag_id
-    result['title'] = discussion.title
-    result['description'] = discussion.description
-    return jsonify({'discussion': result})
+    if request.method == 'POST':
+        comment = request.form['comment']
+        new_comment = Comments(
+            user_id=comment['user_id'],
+            discussion_id=comment['discussion_id'],
+            date=comment['date'],
+            text=comment['text']
+        )
+        db.session.add(new_comment)
+        db.session.commit()
+        return jsonify({'message': 'comment created'})#refresh with comment?
+    else:
+        discussion = Discussions.query.filter_by(discussion_id=discussion_id).first()
+        if not discussion:
+            return jsonify({'message': 'discussion does not exist'})
+        result = {}
+        result['discussion_id'] = discussion.discussion_id
+        result['tag_id'] = discussion.tag_id
+        result['title'] = discussion.title
+        result['description'] = discussion.description
+        result['comments'] = []
+
+        comments = Comments.query.filter_by(discussion_id=discussion_id).order_by(asc(Comments.date)).all()
+        for comment in comments:
+            comment_data = {}
+            comment_data['comment_id'] = comment.comment_id
+            comment_data['user_id'] = comment.user_id
+            comment_data['discussion_id'] = comment.discussion_id
+            comment_data['date'] = comment.date
+            comment_data['text'] = comment.text
+            result['comments'].append(comment_data)
+
+        return jsonify({'discussion': result})
+
+@app.route("/comments", methods=['POST'])
+#@token_required
+def post_comment():#param: current_user???
+    pass
 
 if __name__ == '__main__':
     app.run(debug=True)
