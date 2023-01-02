@@ -12,10 +12,13 @@ import {MatIconModule} from '@angular/material/icon'
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
+import {MatInputModule} from '@angular/material/input';
 import { HomeComponent } from './home/home.component';
 import { TagComponent } from './tag/tag.component';
 import { DiscussionComponent } from './discussion/discussion.component'
 import { DiscussionDetailComponent } from './discussion-detail/discussion-detail.component';
+import { AddCommentComponent } from './add-comment/add-comment.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -23,7 +26,8 @@ import { DiscussionDetailComponent } from './discussion-detail/discussion-detail
     HomeComponent,
     TagComponent,
     DiscussionComponent,
-    DiscussionDetailComponent
+    DiscussionDetailComponent,
+    AddCommentComponent
   ],
   imports: [
     BrowserModule,
@@ -37,7 +41,9 @@ import { DiscussionDetailComponent } from './discussion-detail/discussion-detail
     MatSidenavModule,
     MatListModule,
     MatDividerModule,
-    HttpClientModule
+    HttpClientModule,
+    MatInputModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

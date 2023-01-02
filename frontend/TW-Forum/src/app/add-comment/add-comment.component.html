@@ -1,0 +1,11 @@
+<mat-card style="background-color:#b6e6dd">
+    <mat-form-field appearance="fill" style="width:100%">
+        <mat-label>Textarea</mat-label>
+        <textarea cols="100" matInput [(ngModel)]="comment"></textarea>
+    </mat-form-field>
+
+    <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="submit()">Răspunde</button>
+        <button mat-raised-button color="primary" (click)="close()">Anulează</button>
+      </mat-card-actions>
+</mat-card>

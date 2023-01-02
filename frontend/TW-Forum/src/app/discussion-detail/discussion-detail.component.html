@@ -9,7 +9,14 @@
           {{this.discussion?.content}}
         </p>
       </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" (click)="toggleAddComment()">Răspunde</button>
+    </mat-card-actions>
   </mat-card>
+
+<div *ngIf="display" class="comment">
+  <app-add-comment (closed)="toggleAddComment()"></app-add-comment>
+</div>
 
 <div *ngFor="let comment of comments">
     <mat-card class="comment">

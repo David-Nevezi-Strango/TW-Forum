@@ -16,6 +16,7 @@ export class DiscussionDetailComponent implements OnInit {
   constructor(private route: ActivatedRoute,private location: Location,private discussionService:DiscussionService,private commentService:CommentService) { }
   discussion:Discussion|undefined
   comments:Comment[]=[]
+  display=false
 
   ngOnInit(): void {
     this.getDiscussion()
@@ -33,5 +34,9 @@ export class DiscussionDetailComponent implements OnInit {
     this.commentService.getComments(id).subscribe(comments=>{
       this.comments=comments;
     })
+  }
+
+  toggleAddComment(){
+    this.display=!this.display
   }
 }
