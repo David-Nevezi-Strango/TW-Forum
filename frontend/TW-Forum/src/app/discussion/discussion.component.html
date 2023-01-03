@@ -1,4 +1,7 @@
 <mat-card class="listcontainer">
+    <mat-card-header>
+        <mat-card-title>Discuții legate de {{this.tag?.tag_name}}</mat-card-title>
+    </mat-card-header>
     <mat-list>
         <mat-list-item *ngFor="let discussion of discussions">
             <a routerLink="/discussion/{{discussion.discussion_id}}">{{discussion.title}}</a>

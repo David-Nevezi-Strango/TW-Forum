@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Output, EventEmitter } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { COMMENTS } from 'src/mock-data/mock-comments';
 
 @Component({
   selector: 'app-add-comment',
@@ -8,7 +10,7 @@ import { Output, EventEmitter } from '@angular/core';
 })
 export class AddCommentComponent implements OnInit {
 
-  constructor() { }
+  constructor(private route: ActivatedRoute) { }
 
   @Output() closed = new EventEmitter<string>();
   comment:string=""
@@ -22,6 +24,6 @@ export class AddCommentComponent implements OnInit {
   }
 
   submit(){
-    console.log(this.comment)
+    const id=Number(this.route.snapshot.paramMap.get('id'));
   }
 }

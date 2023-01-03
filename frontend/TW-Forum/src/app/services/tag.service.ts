@@ -22,4 +22,12 @@ export class TagService {
     return of(TAGS)
   }
 
+  getTag(id:number):Observable<Tag>{
+    for(let tag of TAGS){
+      if(tag.tag_id==id){
+        return of(tag)
+      }
+    }
+    return of(TAGS[0])
+  }
 }

@@ -20,7 +20,7 @@ export class TagComponent implements OnInit {
   }
 
   getTags(){
-    this.tagService.getTags().subscribe(tags=>{this.tags=tags;console.log(this.tags)}); 
+    this.tagService.getTags().subscribe(tags=>{this.tags=tags}); 
   }
 
 }
