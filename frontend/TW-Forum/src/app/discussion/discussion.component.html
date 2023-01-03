@@ -2,6 +2,7 @@
     <mat-card-header>
         <mat-card-title>Discuții legate de {{this.tag?.tag_name}}</mat-card-title>
     </mat-card-header>
+    <button mat-raised-button color="primary" (click)="openDialog()"><mat-icon>add</mat-icon>Pune o întrebare</button>
     <mat-list>
         <mat-list-item *ngFor="let discussion of discussions">
             <a routerLink="/discussion/{{discussion.discussion_id}}">{{discussion.title}}</a>

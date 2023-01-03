@@ -15,10 +15,12 @@ import { MatDividerModule } from '@angular/material/divider';
 import {MatInputModule} from '@angular/material/input';
 import { HomeComponent } from './home/home.component';
 import { TagComponent } from './tag/tag.component';
+import { MatDialogModule } from '@angular/material/dialog';
 import { DiscussionComponent } from './discussion/discussion.component'
 import { DiscussionDetailComponent } from './discussion-detail/discussion-detail.component';
 import { AddCommentComponent } from './add-comment/add-comment.component';
 import { FormsModule } from '@angular/forms';
+import { AddDiscussionComponent } from './add-discussion/add-discussion.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,8 @@ import { FormsModule } from '@angular/forms';
     TagComponent,
     DiscussionComponent,
     DiscussionDetailComponent,
-    AddCommentComponent
+    AddCommentComponent,
+    AddDiscussionComponent
   ],
   imports: [
     BrowserModule,
@@ -43,7 +46,8 @@ import { FormsModule } from '@angular/forms';
     MatDividerModule,
     HttpClientModule,
     MatInputModule,
-    FormsModule
+    FormsModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]
