@@ -54,13 +54,13 @@ class Comments(db.Model):
     date = db.Column(db.Date, nullable=False)
     text = db.Column(db.String(500), nullable=False)
 
-@app.after_request
-def after_request(response):
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Credentials', 'true')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,Application/Json')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
-    return response
+# @app.after_request
+# def after_request(response):
+#     response.headers.add('Access-Control-Allow-Origin', '*')
+#     response.headers.add('Access-Control-Allow-Credentials', 'true')
+#     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,Application/Json')
+#     response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,OPTION,POST,DELETE')
+#     return response
 
 def token_required(f):
    @wraps(f)
@@ -92,6 +92,7 @@ def login_user():
 #@app.route("/", methods=['GET'])
 #@app.route("/home", methods=['GET'])
 @app.route("/tags", methods=['GET'])
+@cross_origin()
 def home():
     tags = Tags.query.all()
     result = []
@@ -103,6 +104,7 @@ def home():
     return jsonify(result)
 
 @app.route("/tags/<tag_id>", methods=['GET'])
+@cross_origin()
 def get_tag_by_id(tag_id):
     tag = Tags.query.filter_by(tag_id=tag_id).first()
     if not tag:
@@ -113,10 +115,12 @@ def get_tag_by_id(tag_id):
     return jsonify(result)
 
 @app.route("/discussions", methods=['POST'])
+@cross_origin()
 def post_discussion():
     #create new discussion, if tag does not exist, it will be created
     if request.method == 'POST':
-        discussion = request.get_json()['data']
+        discussion = request.get_json()
+        print(discussion)
         tag = Tags.query.filter_by(tag_name=discussion['tag_name']).first()
         if tag is None:
             tag = Tags(
@@ -136,15 +140,16 @@ def post_discussion():
         db.session.commit()
         db.session.refresh(new_discussion)
 
-        result = dict()
-        result['discussion_id'] = discussion.discussion_id
-        result['tag_id'] = discussion.tag_id
-        result['title'] = discussion.title
-        result['description'] = discussion.description
+        result = {}
+        result['discussion_id'] = new_discussion.discussion_id
+        result['tag_id'] = new_discussion.tag_id
+        result['title'] = new_discussion.title
+        result['description'] = new_discussion.description
         return jsonify(result)#redirect?
 #and if new tag?
 
 @app.route("/discussions/<tag_id>", methods=['GET'])
+@cross_origin()
 def get_discussionlist_by_tag(tag_id):
     #return list of discussion by tagid
     discussions = Discussions.query.filter_by(tag_id=tag_id).all()
@@ -159,6 +164,7 @@ def get_discussionlist_by_tag(tag_id):
     return jsonify(result)
 
 @app.route("/discussion/<discussion_id>", methods=['GET', 'POST'])
+@cross_origin()
 #@token_required
 def get_post_discussion_by_id(discussion_id):
     #add new comment to discussion
