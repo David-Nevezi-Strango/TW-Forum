@@ -2,7 +2,7 @@ from flask import Flask, jsonify, make_response, request
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import asc
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from functools import wraps
 #import uuid
 import jwt
@@ -18,9 +18,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:root1root!@localho
 #engine = create_engine("mysql+pymysql://root:root1root!@localhost:3306/discussion_forum")
 
 #db = scoped_session(sessionmaker(bind=engine))
+db = SQLAlchemy(app)
+
 #cors = CORS(app, resources={r"/*": {"origins": "*"}})
 CORS(app)
-db = SQLAlchemy(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 
 class Users(db.Model):
@@ -55,6 +57,7 @@ class Comments(db.Model):
 @app.after_request
 def after_request(response):
     response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,Application/Json')
     response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
     return response
@@ -99,9 +102,11 @@ def home():
         result.append(tag_data)
     return jsonify(result)
 
-@app.route("tags/<tag_id>", methods=["GET"])
+@app.route("/tags/<tag_id>", methods=['GET'])
 def get_tag_by_id(tag_id):
     tag = Tags.query.filter_by(tag_id=tag_id).first()
+    if not tag:
+        return jsonify({'message': 'no tag like this'})
     result = {}
     result['tag_id'] = tag.tag_id
     result['tag_name'] = tag.tag_name
@@ -190,7 +195,7 @@ def get_post_discussion_by_id(discussion_id):
             comment_data['text'] = comment.text
             result['comments'].append(comment_data)
 
-        return jsonify({'discussion': result})
+        return jsonify(result)
 
 
 if __name__ == '__main__':
