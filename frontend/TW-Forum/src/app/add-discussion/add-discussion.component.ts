@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DiscussionService } from '../services/discussion.service';
 
 @Component({
   selector: 'app-add-discussion',
@@ -7,9 +8,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AddDiscussionComponent implements OnInit {
 
-  constructor() { }
+  constructor(private discussionService:DiscussionService) { }
+
+  title:string=""
+  tag:string=""
+  description:string=""
 
   ngOnInit(): void {
+  }
+
+  addDiscussion(){
+    let discussion={"title":this.title,"tag_name":this.tag,"description":this.description}
+    this.discussionService.addDiscussion(discussion).subscribe()
+    console.log("function called")
   }
 
 }
