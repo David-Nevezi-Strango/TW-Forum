@@ -18,7 +18,7 @@
   <app-add-comment (closed)="toggleAddComment()"></app-add-comment>
 </div>
 
-<div *ngFor="let comment of comments">
+<div *ngFor="let comment of this.discussion?.comments">
     <mat-card class="comment">
         <mat-card-header>
             <div mat-card-avatar class="example-header-image"></div>

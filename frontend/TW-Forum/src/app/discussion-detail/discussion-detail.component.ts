@@ -15,7 +15,6 @@ export class DiscussionDetailComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,private location: Location,private discussionService:DiscussionService,private commentService:CommentService) { }
   discussion:Discussion|undefined
-  comments:Comment[]=[]
   display=false
 
   ngOnInit(): void {
@@ -25,14 +24,8 @@ export class DiscussionDetailComponent implements OnInit {
   getDiscussion():void{
     const id=Number(this.route.snapshot.paramMap.get('id'));
     this.discussionService.getDiscussion(id).subscribe(discussion=>{
-      this.discussion=discussion;
-      this.getComments(this.discussion.discussion_id)
-    })
-  }
-
-  getComments(id:number):void{
-    this.commentService.getComments(id).subscribe(comments=>{
-      this.comments=comments;
+      this.discussion=discussion
+      console.log(this.discussion)
     })
   }
 

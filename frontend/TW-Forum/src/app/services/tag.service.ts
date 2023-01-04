@@ -10,7 +10,7 @@ import { Observable, of } from 'rxjs';
 export class TagService {
 
   constructor(private http: HttpClient) { }
-  url="localhost:5000/tags"
+  url="http://localhost:5000/tags"
 
   getTags():Observable<Tag[]>{
     return this.http.get<Tag[]>(this.url)
