@@ -2,21 +2,17 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { Comment } from 'src/models/Comment';
 import { COMMENTS } from 'src/mock-data/mock-comments';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommentService {
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
+  url="http://localhost:5000/discussion"
 
   getComments(id:number):Observable<Comment[]>{
-    let result:Comment[]=[]
-    for(let comment of COMMENTS){
-      if(comment.discussion_id==id){
-        result.push(comment);
-      }
-    }
-    return of(result)
+    return this.http.get<Comment[]>(`${this.url}/${id}`)
   }
 }
