@@ -18,7 +18,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:root1root!@localho
 #engine = create_engine("mysql+pymysql://root:root1root!@localhost:3306/discussion_forum")
 
 #db = scoped_session(sessionmaker(bind=engine))
-cors = CORS(app, resources={r"/*": {"origins": "*"}})
+#cors = CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app)
 db = SQLAlchemy(app)
 
 
@@ -54,7 +55,7 @@ class Comments(db.Model):
 @app.after_request
 def after_request(response):
     response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,Application/Json')
     response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
     return response
 
@@ -98,35 +99,66 @@ def home():
         result.append(tag_data)
     return jsonify(result)
 
-@app.route("/discussions/<tag_id>", methods=['GET', 'POST'])
-def get_discussionlist_by_tag(tag_id):
+@app.route("tags/<tag_id>", methods=["GET"])
+def get_tag_by_id(tag_id):
+    tag = Tags.query.filter_by(tag_id=tag_id).first()
+    result = {}
+    result['tag_id'] = tag.tag_id
+    result['tag_name'] = tag.tag_name
+    return jsonify(result)
+
+@app.route("/discussions", methods=['POST'])
+def post_discussion():
+    #create new discussion, if tag does not exist, it will be created
     if request.method == 'POST':
-        discussion = request.form['discussion']
+        discussion = request.get_json()['data']
+        tag = Tags.query.filter_by(tag_name=discussion['tag_name']).first()
+        if tag is None:
+            tag = Tags(
+                tag_name=discussion['tag_name']
+            )
+            db.session.add(tag)
+            db.session.commit()
+            db.session.refresh(tag)
+            #tag = Tags.query.filter_by(tag_name=discussion['tag_name']).first()
+
         new_discussion = Discussions(
-            tag_id=discussion['tag_id'],
+            tag_id=tag.tag_id,
             title=discussion['title'],
             description=discussion['description']
         )
         db.session.add(new_discussion)
         db.session.commit()
-        return jsonify({'message': 'comment created'})#redirect?
-    else:
-        discussions = Discussions.query.filter_by(tag_id=tag_id).all()
-        result = []
-        for discussion in discussions:
-            discussion_data = {}
-            discussion_data['discussion_id'] = discussion.discussion_id
-            discussion_data['tag_id'] = discussion.tag_id
-            discussion_data['title'] = discussion.title
-            discussion_data['description'] = discussion.description
-            result.append(discussion_data)
-        return jsonify(result)
+        db.session.refresh(new_discussion)
+
+        result = dict()
+        result['discussion_id'] = discussion.discussion_id
+        result['tag_id'] = discussion.tag_id
+        result['title'] = discussion.title
+        result['description'] = discussion.description
+        return jsonify(result)#redirect?
+#and if new tag?
+
+@app.route("/discussions/<tag_id>", methods=['GET'])
+def get_discussionlist_by_tag(tag_id):
+    #return list of discussion by tagid
+    discussions = Discussions.query.filter_by(tag_id=tag_id).all()
+    result = []
+    for discussion in discussions:
+        discussion_data = {}
+        discussion_data['discussion_id'] = discussion.discussion_id
+        discussion_data['tag_id'] = discussion.tag_id
+        discussion_data['title'] = discussion.title
+        discussion_data['description'] = discussion.description
+        result.append(discussion_data)
+    return jsonify(result)
 
 @app.route("/discussion/<discussion_id>", methods=['GET', 'POST'])
 #@token_required
-def get_discussion_by_id(discussion_id):
+def get_post_discussion_by_id(discussion_id):
+    #add new comment to discussion
     if request.method == 'POST':
-        comment = request.form['comment']
+        comment = request.get_json()
         new_comment = Comments(
             user_id=comment['user_id'],
             discussion_id=comment['discussion_id'],
@@ -137,6 +169,7 @@ def get_discussion_by_id(discussion_id):
         db.session.commit()
         return jsonify({'message': 'comment created'})#refresh with comment?
     else:
+        #get discussion by id
         discussion = Discussions.query.filter_by(discussion_id=discussion_id).first()
         if not discussion:
             return jsonify({'message': 'discussion does not exist'})
@@ -159,10 +192,6 @@ def get_discussion_by_id(discussion_id):
 
         return jsonify({'discussion': result})
 
-@app.route("/comments", methods=['POST'])
-#@token_required
-def post_comment():#param: current_user???
-    pass
 
 if __name__ == '__main__':
     app.run(debug=True)
