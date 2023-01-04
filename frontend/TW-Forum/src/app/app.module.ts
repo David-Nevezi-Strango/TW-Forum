@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -12,10 +12,15 @@ import {MatIconModule} from '@angular/material/icon'
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
+import {MatInputModule} from '@angular/material/input';
 import { HomeComponent } from './home/home.component';
 import { TagComponent } from './tag/tag.component';
+import { MatDialogModule } from '@angular/material/dialog';
 import { DiscussionComponent } from './discussion/discussion.component'
 import { DiscussionDetailComponent } from './discussion-detail/discussion-detail.component';
+import { AddCommentComponent } from './add-comment/add-comment.component';
+import { FormsModule } from '@angular/forms';
+import { AddDiscussionComponent } from './add-discussion/add-discussion.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +28,9 @@ import { DiscussionDetailComponent } from './discussion-detail/discussion-detail
     HomeComponent,
     TagComponent,
     DiscussionComponent,
-    DiscussionDetailComponent
+    DiscussionDetailComponent,
+    AddCommentComponent,
+    AddDiscussionComponent
   ],
   imports: [
     BrowserModule,
@@ -36,7 +43,11 @@ import { DiscussionDetailComponent } from './discussion-detail/discussion-detail
     MatIconModule,
     MatSidenavModule,
     MatListModule,
-    MatDividerModule
+    MatDividerModule,
+    HttpClientModule,
+    MatInputModule,
+    FormsModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TagService } from '../services/tag.service';
 import { Tag } from 'src/models/tag';
+import { TAGS } from 'src/mock-data/mock-tags';
 
 @Component({
   selector: 'app-tag',
@@ -19,7 +20,7 @@ export class TagComponent implements OnInit {
   }
 
   getTags(){
-    this.tags=this.tagService.getTags(); 
+    this.tagService.getTags().subscribe(tags=>{this.tags=tags}); 
   }
 
 }
