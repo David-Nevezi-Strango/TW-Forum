@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, make_response, request
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import asc
+from sqlalchemy import asc, create_engine
 from flask_cors import CORS, cross_origin
 from functools import wraps
 #import uuid
@@ -14,10 +14,12 @@ secrets.token_hex(16)
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['SECRET_KEY'] = 'introduce_one'
-app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:root1root!@localhost:3306/discussion_forum"
-#engine = create_engine("mysql+pymysql://root:root1root!@localhost:3306/discussion_forum")
-
-#db = scoped_session(sessionmaker(bind=engine))
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://unidb:root1root!@uni.mysql.database.azure.com:3306/discussion_forum"# ?ssl=true
+#app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"ssl": {"ca": "DigiCertGlobalRootCA.crt.pem"}}
+#engine = create_engine("mysql+pymysql://root:root1root!@localhost:3306/discussion_forum",connect_args={"ssl": {"ssl_ca": "DigiCertGlobalRootCA.crt.pem"}})
+#{"ssl": {"ssl_ca": "DigiCertGlobalRootCA.crt.pem"}}
+#db = engine.connect()
+#db = SQLAlchemy(app, engine_options={"ssl": {"ssl_ca": "DigiCertGlobalRootCA.crt.pem"}})
 db = SQLAlchemy(app)
 
 #cors = CORS(app, resources={r"/*": {"origins": "*"}})

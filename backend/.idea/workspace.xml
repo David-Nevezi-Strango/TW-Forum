@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1e185878-9683-4154-b136-595733751b64" name="Changes" comment="Dummy Data + New Route + New column">
+    <list default="true" id="1e185878-9683-4154-b136-595733751b64" name="Changes" comment="Fix for POST CORS">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,6 +71,7 @@
       <workItem from="1672068609389" duration="2372000" />
       <workItem from="1672139394635" duration="39000" />
       <workItem from="1672834125813" duration="3633000" />
+      <workItem from="1672922430042" duration="5714000" />
     </task>
     <task id="LOCAL-00001" summary="First try of backend">
       <created>1670774711951</created>
@@ -106,7 +108,14 @@
       <option name="project" value="LOCAL" />
       <updated>1672070276833</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Fix for POST CORS">
+      <created>1672860164806</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1672860164806</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -128,10 +137,11 @@
     <MESSAGE value="Functional backend" />
     <MESSAGE value="Dummy Data + New Route + New column" />
     <MESSAGE value="New Fix for CORS" />
-    <option name="LAST_COMMIT_MESSAGE" value="New Fix for CORS" />
+    <MESSAGE value="Fix for POST CORS" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix for POST CORS" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/backend$Flask__app_py_.coverage" NAME="Flask (app.py) Coverage Results" MODIFIED="1672842076044" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/backend$backend.coverage" NAME="backend Coverage Results" MODIFIED="1672860108089" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/backend$backend.coverage" NAME="backend Coverage Results" MODIFIED="1672928745628" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>
