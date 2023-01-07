@@ -3,7 +3,7 @@ from flask import Flask, jsonify, make_response, request
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import login_user, login_required, logout_user, UserMixin, LoginManager, current_user
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import asc, create_engine, func
+from sqlalchemy import asc, create_engine, func, desc
 from flask_cors import CORS, cross_origin
 from functools import wraps
 import uuid
@@ -128,20 +128,25 @@ def login_post():
     login_user(user, remember=remember)
     return jsonify({'message': 'successfull login'})
 
+
+
+
 @app.route('/signup', methods=['POST'])
 def signup_post():
     user = request.get_json()
     username = user['username']
     mail = user['email']
-    name = request.form.get('name')
-    password = request.form.get('password')
-
+    name = user['name']
+    password = user['password']
+    print(user)
     user = Users.query.filter_by(mail=mail).first()
     if user:
         return jsonify({'message': 'user already exist'})
 
-    last_not_id = Notifications.query(func.max(Notifications.notification_id)).first()
-    new_user = Users(username=username, mail=mail, name=name, password=generate_password_hash(password, method='sha256'), last_notification_id=last_not_id)
+    #last_not_id = Notifications.query.get(func.max(Notifications.notification_id)).first()
+    last_not_id = Notifications.query.order_by(desc(Notifications.notification_id)).first()
+    print(last_not_id)
+    new_user = Users(username=username, mail=mail, name=name, password=generate_password_hash(password, method='sha256'), last_notification_id=last_not_id.notification_id)
 
     db.session.add(new_user)
     db.session.commit()
