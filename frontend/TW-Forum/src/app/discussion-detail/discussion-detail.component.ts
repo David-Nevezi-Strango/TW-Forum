@@ -4,7 +4,6 @@ import { Location } from '@angular/common';
 import { DiscussionService } from '../services/discussion.service';
 import { Discussion } from 'src/models/Discussion';
 import { CommentService } from '../services/comment.service';
-import { Comment } from 'src/models/Comment';
 
 @Component({
   selector: 'app-discussion-detail',
@@ -25,7 +24,7 @@ export class DiscussionDetailComponent implements OnInit {
     const id=Number(this.route.snapshot.paramMap.get('id'));
     this.discussionService.getDiscussion(id).subscribe(discussion=>{
       this.discussion=discussion
-      console.log(this.discussion)
+      console.log(this.discussion.description)
     })
   }
 
