@@ -21,6 +21,8 @@ import { DiscussionDetailComponent } from './discussion-detail/discussion-detail
 import { AddCommentComponent } from './add-comment/add-comment.component';
 import { FormsModule } from '@angular/forms';
 import { AddDiscussionComponent } from './add-discussion/add-discussion.component';
+import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,9 @@ import { AddDiscussionComponent } from './add-discussion/add-discussion.componen
     DiscussionComponent,
     DiscussionDetailComponent,
     AddCommentComponent,
-    AddDiscussionComponent
+    AddDiscussionComponent,
+    LoginComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,
