@@ -1,8 +1,9 @@
 from flask import Flask, jsonify, make_response, request
+from flask_talisman import Talisman
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import login_user, login_required, logout_user, UserMixin, LoginManager, current_user
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import asc, create_engine
+from sqlalchemy import asc, create_engine, func
 from flask_cors import CORS, cross_origin
 from functools import wraps
 import uuid
@@ -25,6 +26,7 @@ db = SQLAlchemy(app)
 
 #cors = CORS(app, resources={r"/*": {"origins": "*"}})
 CORS(app)
+Talisman(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 
@@ -34,12 +36,18 @@ login_manager.init_app(app)
 
 
 
+class Notifications(db.Model):
+    notification_id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.String(250), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+
 class Users(UserMixin, db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     mail = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(50), nullable=False)
     name = db.Column(db.String(50))
+    last_notification_id = db.Column(db.Integer, db.ForeignKey('notifications.notification_id'), nullable=False)
 
 class Tags(db.Model):
     tag_id = db.Column(db.Integer, primary_key=True)
@@ -119,6 +127,26 @@ def login_post():
 
     login_user(user, remember=remember)
     return jsonify({'message': 'successfull login'})
+
+@app.route('/signup', methods=['POST'])
+def signup_post():
+    user = request.get_json()
+    username = user['username']
+    email = user['email']
+    name = request.form.get('name')
+    password = request.form.get('password')
+
+    user = Users.query.filter_by(email=email).first()
+    if user:
+        return jsonify({'message': 'user already exist'})
+
+    last_not_id = Notifications.query(func.max(Notifications.notification_id)).first()
+    new_user = Users(username=username, email=email, name=name, password=generate_password_hash(password, method='sha256'), last_notification_id=last_not_id)
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({'message': 'successfull signup'})
 
 @app.route('/logout')
 @login_required
