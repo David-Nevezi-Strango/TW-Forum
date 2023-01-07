@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, make_response, request
-from flask_talisman import Talisman
+#from flask_talisman import Talisman
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import login_user, login_required, logout_user, UserMixin, LoginManager, current_user
 from flask_sqlalchemy import SQLAlchemy
@@ -132,16 +132,16 @@ def login_post():
 def signup_post():
     user = request.get_json()
     username = user['username']
-    email = user['email']
+    mail = user['email']
     name = request.form.get('name')
     password = request.form.get('password')
 
-    user = Users.query.filter_by(email=email).first()
+    user = Users.query.filter_by(mail=mail).first()
     if user:
         return jsonify({'message': 'user already exist'})
 
     last_not_id = Notifications.query(func.max(Notifications.notification_id)).first()
-    new_user = Users(username=username, email=email, name=name, password=generate_password_hash(password, method='sha256'), last_notification_id=last_not_id)
+    new_user = Users(username=username, mail=mail, name=name, password=generate_password_hash(password, method='sha256'), last_notification_id=last_not_id)
 
     db.session.add(new_user)
     db.session.commit()
