@@ -3,12 +3,20 @@ create table Tags (
     tag_name varchar(50) not null
 );
 
+create table Notifications (
+	notification_id int auto_increment primary key,
+    text varchar(250) not null,
+    date date not null
+);
+
 create table Users (
     user_id int auto_increment primary key,
     username varchar(50) not null,
     password varchar(50) not null,
     mail varchar(50) not null,
     name varchar(50),
+    last_notification_id int not null,
+    foreign key (last_notification_id) references Notifications(notification_id),
     unique(username),
     unique (mail)
 );
@@ -42,14 +50,15 @@ create table Preferences (
     foreign key (tag_id) references Tags(tag_id)
 );
 
+-- drop table Comments;
+-- drop table Preferences;
+-- drop table Discussions;
+-- drop table Tags;
+-- drop table Users;
+-- drop table Notifications;
 
-drop table Comments;
-drop table Preferences;
-drop table Discussions;
-drop table Tags;
-drop table Users;
 
-#dummy data
+-- dummy data
 insert into Tags (tag_name) values 
                                 ('UVT'),
                                 ('UPT'),
@@ -57,17 +66,25 @@ insert into Tags (tag_name) values
                                 ('UPB'),
                                 ('UTCLUJ'),
                                 ('UMFT'),
-                                ('USAMVBT')
-                                ;
+                                ('USAMVBT');
 
-insert into Users (username, mail, password, name) values 
-                                ('user1', 'user1@mail.com', 'password1', 'name1'),
-                                ('user2', 'user2@mail.com', 'password2', 'name2'),
-                                ('user3', 'user3@mail.com', 'password3', 'name3'),
-                                ('user4', 'user4@mail.com', 'password4', 'name4'),
-                                ('user5', 'user5@mail.com', 'password5', 'name5'),
-                                ('user6', 'user6@mail.com', 'password6', 'name6'),
-                                ('user7', 'user7@mail.com', 'password7', 'name7');
+insert into Notifications (text, date) values 
+                                ('notification1', '2019-01-01'),
+                                ('notification2', '2019-01-02'),
+                                ('notification3', '2019-01-03'),
+                                ('notification4', '2019-01-04'),
+                                ('notification5', '2019-01-05'),
+                                ('notification6', '2019-01-06'),
+                                ('notification7', '2019-01-07');
+
+insert into Users (username, mail, password, name, last_notification_id) values 
+                                ('user1', 'user1@mail.com', 'password1', 'name1', 1),
+                                ('user2', 'user2@mail.com', 'password2', 'name2', 2),
+                                ('user3', 'user3@mail.com', 'password3', 'name3', 3),
+                                ('user4', 'user4@mail.com', 'password4', 'name4', 4),
+                                ('user5', 'user5@mail.com', 'password5', 'name5', 5),
+                                ('user6', 'user6@mail.com', 'password6', 'name6', 6),
+                                ('user7', 'user7@mail.com', 'password7', 'name7', 7);
 
 insert into Discussions (tag_id, title, description) values 
                                 (1, 'title1', 'description1'),
@@ -142,3 +159,4 @@ insert into Comments (user_id, discussion_id, date, text) values
                                 (6, 7, '2019-01-06', 'text6'),
                                 (7, 7, '2019-01-07', 'text7');
 
+select * from comments

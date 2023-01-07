@@ -3,6 +3,7 @@ import { Discussion } from 'src/models/Discussion';
 //import { DISCUSSIONS } from 'src/mock-data/mock-discussions';
 import { Observable,of } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { catchError, map, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -19,5 +20,9 @@ export class DiscussionService {
 
   getDiscussion(id:number):Observable<Discussion>{
     return this.http.get<Discussion>(`${this.single_url}/${id}`)
+  }
+
+  addDiscussion(discussion:Object): Observable<Discussion> {
+    return this.http.post<Discussion>(this.url, discussion)
   }
 }

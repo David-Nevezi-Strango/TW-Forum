@@ -3,20 +3,20 @@
     <mat-dialog-content>
         <mat-form-field appearance="fill" style="width:50%">
             <mat-label>Subiect</mat-label>
-            <input matInput>
+            <input matInput [(ngModel)]="title">
         </mat-form-field>
         <mat-form-field appearance="fill" style="margin-left:10px;width:20%">
             <mat-label>Tag</mat-label>
-            <input matInput>
+            <input matInput [(ngModel)]="tag">
         </mat-form-field>
         <br>
         <mat-form-field appearance="fill" style="width:100%">
             <mat-label>Conținut</mat-label>
-            <textarea cols="100" matInput></textarea>
+            <textarea cols="100" matInput [(ngModel)]="description"></textarea>
         </mat-form-field>
     </mat-dialog-content>
 
     <mat-dialog-actions>
-        <button mat-raised-button color="primary">Submit</button>
+        <button mat-raised-button color="primary" (click)="addDiscussion()">Submit</button>
     </mat-dialog-actions>
 </div>
