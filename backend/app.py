@@ -1,10 +1,11 @@
-from flask import Flask, jsonify, make_response, request
+from flask import Flask, jsonify, make_response, request, session
 #from flask_talisman import Talisman
 from werkzeug.security import generate_password_hash,check_password_hash
-from flask_login import login_user, login_required, logout_user, UserMixin, LoginManager, current_user
+from flask_login import login_user, login_required, logout_user, UserMixin, LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import asc, create_engine, func, desc
 from flask_cors import CORS, cross_origin
+from itsdangerous import JSONWebSignatureSerializer
 from functools import wraps
 import uuid
 import jwt
@@ -29,12 +30,12 @@ CORS(app)
 #Talisman(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-
-login_manager = LoginManager()
-login_manager.login_view = 'login_post'
-login_manager.init_app(app)
-
-
+#
+# login_manager = LoginManager()
+# login_manager.login_view = 'login_post'
+# login_manager.init_app(app)
+#
+# s = JSONWebSignatureSerializer('secret-key')
 
 class Notifications(db.Model):
     notification_id = db.Column(db.Integer, primary_key=True)
@@ -74,6 +75,11 @@ class Comments(db.Model):
     date = db.Column(db.Date, nullable=False)
     text = db.Column(db.String(500), nullable=False)
 
+class BlackListToken(db.Model):
+    token_id = db.Column(db.Integer, primary_key=True)
+    token = db.Column(db.String(500), unique=True, nullable=False)
+    blacklisted_on = db.Column(db.DateTime, nullable=False)
+
 # @app.after_request
 # def after_request(response):
 #     response.headers.add('Access-Control-Allow-Origin', '*')
@@ -82,57 +88,72 @@ class Comments(db.Model):
 #     response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,OPTION,POST,DELETE')
 #     return response
 
-# def token_required(f):
-#    @wraps(f)
-#    def decorator(*args, **kwargs):
-#        token = None
-#        if 'x-access-tokens' in request.headers:
-#            token = request.headers['x-access-tokens']
-#        if not token:
-#            return jsonify({'message': 'a valid token is missing'})
-#        try:
-#            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
-#            current_user = Users.query.filter_by(user_id=data['user_id']).first()
-#        except:
-#            return jsonify({'message': 'token is invalid'})
-#        return f(current_user, *args, **kwargs)
-#    return decorator
+def token_required(f):
+   @wraps(f)
+   def decorator(*args, **kwargs):
+       token = None
+       if 'x-access-tokens' in request.headers:
+           token = request.headers['x-access-tokens']
+       if not token:
+           return jsonify({'message': 'a valid token is missing'})
+       check_token = BlackListToken.query.filter_by(token=token).first()
+       if check_token:
+           return jsonify({'message': 'token is invalid'})
+       try:
+           data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+           current_user = Users.query.filter_by(user_id=data['user_id']).first()
+       except:
+           return jsonify({'message': 'token is invalid'})
+       return f(current_user, *args, **kwargs)
+   return decorator
+
+
+@app.route('/login', methods=['POST'])
+def login_user():
+   auth = request.authorization
+   print(auth)
+   if not auth or not auth.username or not auth.password:
+       return make_response('could not verify', 401, {'Authentication': 'login required"'})
+   user = Users.query.filter_by(username=auth.username).first()
+   if check_password_hash(user.password, auth.password):
+       token = jwt.encode({'user_id' : user.user_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=50)}, app.config['SECRET_KEY'], "HS256")
+       return jsonify({'token' : token})
+   return make_response('could not verify',  401, {'Authentication': '"login required"'})
+
+# @login_manager.request_loader()
+# def load_user(user_id):
+#     return Users.query.get(int(user_id))
+# @login_manager.request_loader
+# def load_user(request):
+#     token = request.headers.get('Authorization')
+#     if token is None:
+#         token = request.args.get('token')
+#
+#     if token is not None:
+#         username,password = token.split(":") # naive token
+#         user_entry = Users.get(username)
+#         if (user_entry is not None):
+#             user = Users(user_entry[0],user_entry[1])
+#             if (user.password == password):
+#                 return user
+#     return None
 
 
 # @app.route('/login', methods=['POST'])
-# def login_user():
-#    auth = request.authorization
-#    if not auth or not auth.username or not auth.password:
-#        return make_response('could not verify', 401, {'Authentication': 'login required"'})
-#    user = Users.query.filter_by(username=auth.username).first()
-#    if check_password_hash(user.password, auth.password):
-#        token = jwt.encode({'user_id' : user.user_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=50)}, app.config['SECRET_KEY'], "HS256")
-#        return jsonify({'token' : token})
-#    return make_response('could not verify',  401, {'Authentication': '"login required"'})
-
-@login_manager.user_loader
-def load_user(user_id):
-    return Users.query.get(int(user_id))
-
-@app.route('/login', methods=['POST'])
-def login_post():
-    print(request.form)
-    user = request.get_json()
-    mail = user['email']
-    #name = user['name']
-    password = user['password']
-    remember = False
-
-    user = Users.query.filter_by(mail=mail).first()
-    print(type(user))
-    print(user.password)
-    print(password)
-    print(check_password_hash(user.password, password))
-    if not user or not check_password_hash(user.password, password):
-        return jsonify({'message': 'incorrect username or password'})
-
-    login_user(user, remember=remember)
-    return jsonify({'message': 'successfull login'})
+# def login_post():
+#     print(request.authorization)
+#     user = request.get_json()
+#     mail = user['email']
+#     #name = user['name']
+#     password = user['password']
+#     remember = False
+#
+#     user = Users.query.filter_by(mail=mail).first()
+#     if not user or not check_password_hash(user.password, password):
+#         return jsonify({'message': 'incorrect username or password'})
+#
+#     login_user(user, remember=remember)
+#     return jsonify({'message': 'successfull login'})
 
 
 
@@ -159,10 +180,46 @@ def signup_post():
     return jsonify({'message': 'successfull signup'})
 
 @app.route('/logout')
-@login_required
+@token_required
 def logout():
-    logout_user()
-    return jsonify({'message': 'successfull logout'})
+    # get auth token
+    auth_header = request.headers.get('Authorization')
+    if auth_header:
+        auth_token = auth_header.split(" ")[1]
+    else:
+        auth_token = ''
+    if auth_token:
+        resp = jwt.decode(auth_token, app.config['SECRET_KEY'], algorithms=["HS256"])
+        if not isinstance(resp, str):
+            # mark the token as blacklisted
+            blacklist_token = BlackListToken(token=auth_token, blacklisted_on=datetime.datetime.now())
+            try:
+                # insert the token
+                db.session.add(blacklist_token)
+                db.session.commit()
+                responseObject = {
+                    'status': 'success',
+                    'message': 'Successfully logged out.'
+                }
+                return make_response(jsonify(responseObject)), 200
+            except Exception as e:
+                responseObject = {
+                    'status': 'fail',
+                    'message': e
+                }
+                return make_response(jsonify(responseObject)), 200
+        else:
+            responseObject = {
+                'status': 'fail',
+                'message': resp
+            }
+            return make_response(jsonify(responseObject)), 401
+    else:
+        responseObject = {
+            'status': 'fail',
+            'message': 'Provide a valid auth token.'
+        }
+        return make_response(jsonify(responseObject)), 403
 
 
 #@app.route("/", methods=['GET'])
@@ -192,7 +249,7 @@ def get_tag_by_id(tag_id):
 
 @app.route("/discussions", methods=['POST'])
 @cross_origin()
-@login_required
+@token_required
 def post_discussion():
     #create new discussion, if tag does not exist, it will be created
     if request.method == 'POST':
@@ -243,7 +300,7 @@ def get_discussionlist_by_tag(tag_id):
 
 @app.route("/discussion/<discussion_id>", methods=['POST'])
 @cross_origin()
-@login_required
+@token_required
 def post_comment(discussion_id, current_user):
     #add new comment to discussion
     comment = request.get_json()
