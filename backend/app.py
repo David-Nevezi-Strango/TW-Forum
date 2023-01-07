@@ -31,7 +31,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 
 
 login_manager = LoginManager()
-login_manager.login_view = 'app.login'
+login_manager.login_view = 'login_post'
 login_manager.init_app(app)
 
 
