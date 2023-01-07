@@ -26,7 +26,7 @@ db = SQLAlchemy(app)
 
 #cors = CORS(app, resources={r"/*": {"origins": "*"}})
 CORS(app)
-Talisman(app)
+#Talisman(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 
