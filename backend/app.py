@@ -49,6 +49,9 @@ class Users(UserMixin, db.Model):
     name = db.Column(db.String(50))
     last_notification_id = db.Column(db.Integer, db.ForeignKey('notifications.notification_id'), nullable=False)
 
+    def get_id(self):
+        return (self.user_id)
+
 class Tags(db.Model):
     tag_id = db.Column(db.Integer, primary_key=True)
     tag_name = db.Column(db.String(50), nullable=False)
@@ -115,12 +118,12 @@ def load_user(user_id):
 def login_post():
     print(request.form)
     user = request.get_json()
-    email = user['email']
+    mail = user['email']
     #name = user['name']
     password = user['password']
-    remember = user['remember'] #?
+    remember = False
 
-    user = Users.query.filter_by(email=email).first()
+    user = Users.query.filter_by(mail=mail).first()
 
     if not user or not check_password_hash(user.password, password):
         return jsonify({'message': 'incorrect username or password'})
