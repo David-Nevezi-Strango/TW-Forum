@@ -45,7 +45,7 @@ class Users(UserMixin, db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     mail = db.Column(db.String(50), unique=True, nullable=False)
-    password = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.String(256), nullable=False)
     name = db.Column(db.String(50))
     last_notification_id = db.Column(db.Integer, db.ForeignKey('notifications.notification_id'), nullable=False)
 
@@ -124,7 +124,10 @@ def login_post():
     remember = False
 
     user = Users.query.filter_by(mail=mail).first()
-
+    print(type(user))
+    print(user.password)
+    print(password)
+    print(check_password_hash(user.password, password))
     if not user or not check_password_hash(user.password, password):
         return jsonify({'message': 'incorrect username or password'})
 
@@ -141,14 +144,13 @@ def signup_post():
     mail = user['email']
     name = user['name']
     password = user['password']
-    print(user)
+    #print(user)
     user = Users.query.filter_by(mail=mail).first()
     if user:
         return jsonify({'message': 'user already exist'})
 
-    #last_not_id = Notifications.query.get(func.max(Notifications.notification_id)).first()
     last_not_id = Notifications.query.order_by(desc(Notifications.notification_id)).first()
-    print(last_not_id)
+    #print(last_not_id)
     new_user = Users(username=username, mail=mail, name=name, password=generate_password_hash(password, method='sha256'), last_notification_id=last_not_id.notification_id)
 
     db.session.add(new_user)

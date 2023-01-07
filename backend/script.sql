@@ -12,7 +12,7 @@ create table Notifications (
 create table Users (
     user_id int auto_increment primary key,
     username varchar(50) not null,
-    password varchar(50) not null,
+    password varchar(256) not null,
     mail varchar(50) not null,
     name varchar(50),
     last_notification_id int not null,
@@ -159,4 +159,3 @@ insert into Comments (user_id, discussion_id, date, text) values
                                 (6, 7, '2019-01-06', 'text6'),
                                 (7, 7, '2019-01-07', 'text7');
 
-select * from comments
