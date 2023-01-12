@@ -23,10 +23,12 @@ create table Users (
 
 create table Discussions(
     discussion_id int auto_increment primary key,
+    user_id int not null,
     tag_id int not null,
     title varchar(50) not null,
     description varchar(500) not null,
-    foreign key (tag_id) references Tags(tag_id)
+    foreign key (tag_id) references Tags(tag_id),
+    foreign key (user_id) references Users(user_id)
 );
 
 
@@ -50,12 +52,19 @@ create table Preferences (
     foreign key (tag_id) references Tags(tag_id)
 );
 
+create table BlackListToken(
+	token_id int auto_increment primary key,
+    token varchar(500) not null,
+    blacklisted_on datetime not null
+);
+
 -- drop table Comments;
 -- drop table Preferences;
 -- drop table Discussions;
 -- drop table Tags;
 -- drop table Users;
 -- drop table Notifications;
+
 
 
 -- dummy data
@@ -86,14 +95,14 @@ insert into Users (username, mail, password, name, last_notification_id) values
                                 ('user6', 'user6@mail.com', 'password6', 'name6', 6),
                                 ('user7', 'user7@mail.com', 'password7', 'name7', 7);
 
-insert into Discussions (tag_id, title, description) values 
-                                (1, 'title1', 'description1'),
-                                (2, 'title2', 'description2'),
-                                (3, 'title3', 'description3'),
-                                (4, 'title4', 'description4'),
-                                (5, 'title5', 'description5'),
-                                (6, 'title6', 'description6'),
-                                (7, 'title7', 'description7');
+insert into Discussions (user_id, tag_id, title, description) values 
+                                (1, 1, 'title1', 'description1'),
+                                (2, 2, 'title2', 'description2'),
+                                (3, 3, 'title3', 'description3'),
+                                (4, 4, 'title4', 'description4'),
+                                (5, 5, 'title5', 'description5'),
+                                (6, 6,'title6', 'description6'),
+                                (7, 7,'title7', 'description7');
 
 insert into Preferences (user_id, tag_id) values 
                                 (1, 1),
@@ -159,3 +168,4 @@ insert into Comments (user_id, discussion_id, date, text) values
                                 (6, 7, '2019-01-06', 'text6'),
                                 (7, 7, '2019-01-07', 'text7');
 
+select * from blacklisttoken

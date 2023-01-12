@@ -1,13 +1,10 @@
 from flask import Flask, jsonify, make_response, request, session
-#from flask_talisman import Talisman
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import login_user, login_required, logout_user, UserMixin, LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import asc, create_engine, func, desc
 from flask_cors import CORS, cross_origin
-from itsdangerous import JSONWebSignatureSerializer
 from functools import wraps
-import uuid
 import jwt
 import datetime
 import secrets
@@ -17,41 +14,31 @@ secrets.token_hex(16)
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['SECRET_KEY'] = 'introduce_one'
-app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://unidb:root1root!@uni.mysql.database.azure.com:3306/discussion_forum"# ?ssl=true
-#app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"ssl": {"ca": "DigiCertGlobalRootCA.crt.pem"}}
-#engine = create_engine("mysql+pymysql://root:root1root!@localhost:3306/discussion_forum",connect_args={"ssl": {"ssl_ca": "DigiCertGlobalRootCA.crt.pem"}})
-#{"ssl": {"ssl_ca": "DigiCertGlobalRootCA.crt.pem"}}
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://unidb:root1root!@uni.mysql.database.azure.com:3306/discussion_forum"
 #db = engine.connect()
 #db = SQLAlchemy(app, engine_options={"ssl": {"ssl_ca": "DigiCertGlobalRootCA.crt.pem"}})
 db = SQLAlchemy(app)
 
 #cors = CORS(app, resources={r"/*": {"origins": "*"}})
 CORS(app)
-#Talisman(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-#
-# login_manager = LoginManager()
-# login_manager.login_view = 'login_post'
-# login_manager.init_app(app)
-#
-# s = JSONWebSignatureSerializer('secret-key')
 
 class Notifications(db.Model):
     notification_id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(250), nullable=False)
     date = db.Column(db.Date, nullable=False)
 
-class Users(UserMixin, db.Model):
+class Users(db.Model): #UserMixin
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     mail = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(256), nullable=False)
     name = db.Column(db.String(50))
     last_notification_id = db.Column(db.Integer, db.ForeignKey('notifications.notification_id'), nullable=False)
-
-    def get_id(self):
-        return (self.user_id)
+    #
+    # def get_id(self):
+    #     return (self.user_id)
 
 class Tags(db.Model):
     tag_id = db.Column(db.Integer, primary_key=True)
@@ -131,44 +118,6 @@ def login_user():
        return jsonify(data)
    return make_response('could not verify',  401, {'Authentication': '"login required"'})
 
-# @login_manager.request_loader()
-# def load_user(user_id):
-#     return Users.query.get(int(user_id))
-# @login_manager.request_loader
-# def load_user(request):
-#     token = request.headers.get('Authorization')
-#     if token is None:
-#         token = request.args.get('token')
-#
-#     if token is not None:
-#         username,password = token.split(":") # naive token
-#         user_entry = Users.get(username)
-#         if (user_entry is not None):
-#             user = Users(user_entry[0],user_entry[1])
-#             if (user.password == password):
-#                 return user
-#     return None
-
-
-# @app.route('/login', methods=['POST'])
-# def login_post():
-#     print(request.authorization)
-#     user = request.get_json()
-#     mail = user['email']
-#     #name = user['name']
-#     password = user['password']
-#     remember = False
-#
-#     user = Users.query.filter_by(mail=mail).first()
-#     if not user or not check_password_hash(user.password, password):
-#         return jsonify({'message': 'incorrect username or password'})
-#
-#     login_user(user, remember=remember)
-#     return jsonify({'message': 'successfull login'})
-
-
-
-
 @app.route('/signup', methods=['POST'])
 def signup_post():
     user = request.get_json()
@@ -233,12 +182,25 @@ def logout():
         }
         return make_response(jsonify(responseObject)), 403
 
+@app.route("/notifications/<notification_id", methods=['GET'])
+@cross_origin()
+@token_required
+def get_notifications(notification_id):
+    ref_notification = Notifications.query.filter_by(notification_id=notification_id).first()
+    ref_date = ref_notification.date
+    notifications = Notifications.query.filter_by(Notifications.date > ref_date)
+    result = []
+    for notification in notifications:
+        data = {}
+        data['notification_id'] = notification.notification_id
+        data['text'] = notification.text
+        data['date'] = notification.date
+        result.append(data)
+    return jsonify(result)
 
-#@app.route("/", methods=['GET'])
-#@app.route("/home", methods=['GET'])
 @app.route("/tags", methods=['GET'])
 @cross_origin()
-def home():
+def get_tags():
     tags = Tags.query.all()
     result = []
     for tag in tags:
@@ -257,6 +219,47 @@ def get_tag_by_id(tag_id):
     result = {}
     result['tag_id'] = tag.tag_id
     result['tag_name'] = tag.tag_name
+    return jsonify(result)
+
+@app.route("/discussions/<tag_id>", methods=['GET'])
+@cross_origin()
+def get_discussionlist_by_tag(tag_id):
+    #return list of discussion by tagid
+    discussions = Discussions.query.filter_by(tag_id=tag_id).all()
+    result = []
+    for discussion in discussions:
+        discussion_data = {}
+        discussion_data['discussion_id'] = discussion.discussion_id
+        discussion_data['tag_id'] = discussion.tag_id
+        discussion_data['title'] = discussion.title
+        discussion_data['description'] = discussion.description
+        result.append(discussion_data)
+    return jsonify(result)
+
+@app.route("/discussion/<discussion_id>", methods=['GET'])
+@cross_origin()
+def get_discussion_by_id(discussion_id):
+    #get discussion by id
+    discussion = Discussions.query.filter_by(discussion_id=discussion_id).first()
+    if not discussion:
+        return jsonify({'message': 'discussion does not exist'})
+    result = {}
+    result['discussion_id'] = discussion.discussion_id
+    result['tag_id'] = discussion.tag_id
+    result['title'] = discussion.title
+    result['description'] = discussion.description
+    result['comments'] = []
+
+    comments = Comments.query.filter_by(discussion_id=discussion_id).order_by(asc(Comments.date)).all()
+    for comment in comments:
+        comment_data = {}
+        comment_data['comment_id'] = comment.comment_id
+        comment_data['user_id'] = comment.user_id
+        comment_data['discussion_id'] = comment.discussion_id
+        comment_data['date'] = comment.date
+        comment_data['text'] = comment.text
+        result['comments'].append(comment_data)
+
     return jsonify(result)
 
 @app.route("/discussions", methods=['POST'])
@@ -292,23 +295,18 @@ def post_discussion():
         result['title'] = new_discussion.title
         result['description'] = new_discussion.description
         print(result)
-        return jsonify(result)#redirect?
-#and if new tag?
+        return jsonify(result)
 
-@app.route("/discussions/<tag_id>", methods=['GET'])
+@app.route("/discussion/<discussion_id>", methods=['DELETE'])
 @cross_origin()
-def get_discussionlist_by_tag(tag_id):
-    #return list of discussion by tagid
-    discussions = Discussions.query.filter_by(tag_id=tag_id).all()
-    result = []
-    for discussion in discussions:
-        discussion_data = {}
-        discussion_data['discussion_id'] = discussion.discussion_id
-        discussion_data['tag_id'] = discussion.tag_id
-        discussion_data['title'] = discussion.title
-        discussion_data['description'] = discussion.description
-        result.append(discussion_data)
-    return jsonify(result)
+@token_required
+def delete_discussion(discussion_id):
+    discussion = Discussions.query.filter_by(discussion_id=discussion_id).first()
+    if not discussion:
+       return jsonify({'message': 'discussion with specified id does not exist'})
+    db.session.delete(discussion)
+    db.session.commit()
+    return jsonify({'message': 'successfull delete'})
 
 @app.route("/discussion/<discussion_id>", methods=['POST'])
 @cross_origin()
@@ -326,32 +324,16 @@ def post_comment(discussion_id, current_user):
     db.session.commit()
     return jsonify({'message': 'comment created'})#refresh with comment?
 
-@app.route("/discussion/<discussion_id>", methods=['GET'])
+@app.route("/comment/<comment_id>", methods=['DELETE'])
 @cross_origin()
-def get_discussion_by_id(discussion_id):
-    #get discussion by id
-    discussion = Discussions.query.filter_by(discussion_id=discussion_id).first()
-    if not discussion:
-        return jsonify({'message': 'discussion does not exist'})
-    result = {}
-    result['discussion_id'] = discussion.discussion_id
-    result['tag_id'] = discussion.tag_id
-    result['title'] = discussion.title
-    result['description'] = discussion.description
-    result['comments'] = []
-
-    comments = Comments.query.filter_by(discussion_id=discussion_id).order_by(asc(Comments.date)).all()
-    for comment in comments:
-        comment_data = {}
-        comment_data['comment_id'] = comment.comment_id
-        comment_data['user_id'] = comment.user_id
-        comment_data['discussion_id'] = comment.discussion_id
-        comment_data['date'] = comment.date
-        comment_data['text'] = comment.text
-        result['comments'].append(comment_data)
-
-    return jsonify(result)
-
+@token_required
+def delete_discussion(comment_id):
+    comment = Comments.query.filter_by(comment_id=comment_id).first()
+    if not comment:
+       return jsonify({'message': 'comment with specified id does not exist'})
+    db.session.delete(comment)
+    db.session.commit()
+    return jsonify({'message': 'successfull delete'})
 
 if __name__ == '__main__':
     app.run(debug=True)
