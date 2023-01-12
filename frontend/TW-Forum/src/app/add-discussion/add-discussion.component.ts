@@ -20,7 +20,6 @@ export class AddDiscussionComponent implements OnInit {
   addDiscussion(){
     let discussion={"title":this.title,"tag_name":this.tag,"description":this.description}
     this.discussionService.addDiscussion(discussion).subscribe()
-    console.log("function called")
   }
 
 }

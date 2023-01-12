@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { AuthenticationService } from './services/authentication.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +13,18 @@ import { RegisterComponent } from './register/register.component';
 export class AppComponent {
   title = 'TW-Forum';
   opened=false;
-  constructor(public dialog: MatDialog){}
+  authenticated=false
+  constructor(public dialog: MatDialog,private authenticationService:AuthenticationService,private snackbar:MatSnackBar){}
+
+  ngOnInit():void{
+    let token=localStorage.getItem("token")
+    if(token!=null && token!=''){
+      this.authenticated=true
+    }
+    else{
+      this.authenticated=false
+    }
+  }
 
   openLoginDialog(): void {
     const dialogRef = this.dialog.open(LoginComponent, {
@@ -21,6 +34,10 @@ export class AppComponent {
   openRegisterDialog(): void {
     const dialogRef = this.dialog.open(RegisterComponent, {
     });
+  }
+
+  logout(){
+    this.authenticationService.logout()
   }
 
 }

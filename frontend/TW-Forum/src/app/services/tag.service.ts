@@ -23,11 +23,6 @@ export class TagService {
   */
 
   getTag(id:number):Observable<Tag>{
-    for(let tag of TAGS){
-      if(tag.tag_id==id){
-        return of(tag)
-      }
-    }
-    return of(TAGS[0])
+    return this.http.get<Tag>(`${this.url}/${id}`)
   }
 }

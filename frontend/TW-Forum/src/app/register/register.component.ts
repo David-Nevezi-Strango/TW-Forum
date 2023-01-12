@@ -20,8 +20,17 @@ export class RegisterComponent implements OnInit {
 
   register(){
     let data={"email":this.email,"username":this.username,"name":this.name,"password":this.password}
-    console.log(data)
-    this.authenticationService.register(data).subscribe(response=>{console.log(response)})
+    this.authenticationService.register(data).subscribe()
+    this.authenticationService.login(this.username,this.password).subscribe({
+      next:data=>{
+        localStorage.setItem("token",data.token)
+        window.location.reload()
+      },
+      error:error=>{
+        console.log('There was an error authenticating',error)
+      }
+    })
+
   }
 
 }

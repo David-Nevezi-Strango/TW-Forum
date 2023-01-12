@@ -15,7 +15,20 @@ export class AuthenticationService {
     return this.http.post<Object>(this.register_url,data)
   }
 
-  login(data:Object):Observable<Object>{
-    return this.http.post<Object>(this.login_url,data)
+  login(username:string,password:string):Observable<any>{
+    let httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Basic ' + btoa(username + ':' + password)
+      })
+    };
+
+    let data={"username":username,"password":password}
+    return this.http.post<Object>(this.login_url,data,httpOptions)
+  }
+
+  logout(){
+    localStorage.setItem("token",'')
+    window.location.reload()
   }
 }
