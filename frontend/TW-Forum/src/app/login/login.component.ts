@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from '../services/authentication.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -8,7 +9,7 @@ import { AuthenticationService } from '../services/authentication.service';
 })
 export class LoginComponent implements OnInit {
 
-  constructor(private authenticationService:AuthenticationService) { }
+  constructor(private authenticationService:AuthenticationService,private _snackBar: MatSnackBar) { }
 
   username:string=""
   password:string=""

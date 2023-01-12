@@ -13,6 +13,7 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
 import {MatInputModule} from '@angular/material/input';
+import {MatSnackBarModule} from '@angular/material/snack-bar'
 import { HomeComponent } from './home/home.component';
 import { TagComponent } from './tag/tag.component';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -51,7 +52,8 @@ import { RegisterComponent } from './register/register.component';
     HttpClientModule,
     MatInputModule,
     FormsModule,
-    MatDialogModule
+    MatDialogModule,
+    MatSnackBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]
