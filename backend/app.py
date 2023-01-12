@@ -116,8 +116,15 @@ def login_user():
        return make_response('could not verify', 401, {'Authentication': 'login required"'})
    user = Users.query.filter_by(username=auth.username).first()
    if check_password_hash(user.password, auth.password):
+       data = {}
        token = jwt.encode({'user_id' : user.user_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=50)}, app.config['SECRET_KEY'], "HS256")
-       return jsonify({'token' : token})
+       data['token'] = token
+       data['username'] = user.username
+       data['user_id'] = user.user_id
+       data['email'] = user.mail
+       data['name'] = user.name
+       data['last_notification_id'] = user.last_notification_id
+       return jsonify(data)
    return make_response('could not verify',  401, {'Authentication': '"login required"'})
 
 # @login_manager.request_loader()
