@@ -24,7 +24,6 @@ export class DiscussionDetailComponent implements OnInit {
     const id=Number(this.route.snapshot.paramMap.get('id'));
     this.discussionService.getDiscussion(id).subscribe(discussion=>{
       this.discussion=discussion
-      console.log(this.discussion.description)
     })
   }
 

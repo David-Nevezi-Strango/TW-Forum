@@ -20,8 +20,7 @@ export class RegisterComponent implements OnInit {
 
   register(){
     let data={"email":this.email,"username":this.username,"name":this.name,"password":this.password}
-    console.log(data)
-    this.authenticationService.register(data).subscribe(response=>{console.log(response)})
+    this.authenticationService.register(data).subscribe()
   }
 
 }

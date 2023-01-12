@@ -10,15 +10,22 @@ export class LoginComponent implements OnInit {
 
   constructor(private authenticationService:AuthenticationService) { }
 
-  email:string=""
+  username:string=""
   password:string=""
 
   ngOnInit(): void {
   }
 
   login(){
-    let data={"email":this.email,"password":this.password}
-    this.authenticationService.login(data).subscribe(response=>{console.log(response)})
+    this.authenticationService.login(this.username,this.password).subscribe({
+      next:data=>{
+        localStorage.setItem("token",data.token)
+        window.location.reload()
+      },
+      error:error=>{
+        console.log('There was an error authenticating',error)
+      }
+    })
   }
 
 }
