@@ -96,6 +96,9 @@ def token_required(f):
            token = request.headers['x-access-tokens']
        if not token:
            return jsonify({'message': 'a valid token is missing'})
+       cutoff = (datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+       BlackListToken.query.filter_by(BlackListToken.blacklisted_on <= cutoff).delete()
+       db.session.commit()
        check_token = BlackListToken.query.filter_by(token=token).first()
        if check_token:
            return jsonify({'message': 'token is invalid'})
@@ -124,6 +127,7 @@ def login_user():
        data['email'] = user.mail
        data['name'] = user.name
        data['last_notification_id'] = user.last_notification_id
+       session['username'] = user.username
        return jsonify(data)
    return make_response('could not verify',  401, {'Authentication': '"login required"'})
 
@@ -208,6 +212,7 @@ def logout():
                     'status': 'success',
                     'message': 'Successfully logged out.'
                 }
+                session.pop('username', None)
                 return make_response(jsonify(responseObject)), 200
             except Exception as e:
                 responseObject = {
