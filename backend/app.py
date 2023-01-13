@@ -1,6 +1,5 @@
 from flask import Flask, jsonify, make_response, request, session
 from werkzeug.security import generate_password_hash,check_password_hash
-from flask_login import login_user, login_required, logout_user, UserMixin, LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import asc, create_engine, func, desc
 from flask_cors import CORS, cross_origin
@@ -29,16 +28,13 @@ class Notifications(db.Model):
     text = db.Column(db.String(250), nullable=False)
     date = db.Column(db.Date, nullable=False)
 
-class Users(db.Model): #UserMixin
+class Users(db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     mail = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(256), nullable=False)
     name = db.Column(db.String(50))
     last_notification_id = db.Column(db.Integer, db.ForeignKey('notifications.notification_id'), nullable=False)
-    #
-    # def get_id(self):
-    #     return (self.user_id)
 
 class Tags(db.Model):
     tag_id = db.Column(db.Integer, primary_key=True)
@@ -51,6 +47,7 @@ class Preferences(db.Model):
 
 class Discussions(db.Model):
     discussion_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     tag_id = db.Column(db.Integer, db.ForeignKey('tags.tag_id'), nullable=False)
     title = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(500), nullable=False)
@@ -84,7 +81,7 @@ def token_required(f):
        if not token:
            return jsonify({'message': 'a valid token is missing'})
        cutoff = (datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
-       BlackListToken.query.filter_by(BlackListToken.blacklisted_on <= cutoff).delete()
+       BlackListToken.query.filter(BlackListToken.blacklisted_on <= cutoff).delete()
        db.session.commit()
        check_token = BlackListToken.query.filter_by(token=token).first()
        if check_token:
@@ -103,7 +100,7 @@ def login_user():
    auth = request.authorization
    print(auth)
    if not auth or not auth.username or not auth.password:
-       return make_response('could not verify', 401, {'Authentication': 'login required"'})
+       return make_response('could not verify', 401, {'Authentication': 'login required'})
    user = Users.query.filter_by(username=auth.username).first()
    if check_password_hash(user.password, auth.password):
        data = {}
@@ -116,7 +113,7 @@ def login_user():
        data['last_notification_id'] = user.last_notification_id
        session['username'] = user.username
        return jsonify(data)
-   return make_response('could not verify',  401, {'Authentication': '"login required"'})
+   return make_response('could not verify',  401, {'Authentication': '"login required'})
 
 @app.route('/signup', methods=['POST'])
 def signup_post():
@@ -182,13 +179,13 @@ def logout():
         }
         return make_response(jsonify(responseObject)), 403
 
-@app.route("/notifications/<notification_id", methods=['GET'])
+@app.route("/notifications/<notification_id>", methods=['GET'])
 @cross_origin()
 @token_required
 def get_notifications(notification_id):
     ref_notification = Notifications.query.filter_by(notification_id=notification_id).first()
     ref_date = ref_notification.date
-    notifications = Notifications.query.filter_by(Notifications.date > ref_date)
+    notifications = Notifications.query.filter(Notifications.date > ref_date).all()
     result = []
     for notification in notifications:
         data = {}
@@ -215,7 +212,7 @@ def get_tags():
 def get_tag_by_id(tag_id):
     tag = Tags.query.filter_by(tag_id=tag_id).first()
     if not tag:
-        return jsonify({'message': 'no tag like this'})
+        return make_response('not found', 404, {'Tag': 'tag not found'})
     result = {}
     result['tag_id'] = tag.tag_id
     result['tag_name'] = tag.tag_name
@@ -245,6 +242,7 @@ def get_discussionlist_by_tag(tag_id):
     for discussion in discussions:
         discussion_data = {}
         discussion_data['discussion_id'] = discussion.discussion_id
+        discussion_data['user_id'] = discussion.user_id
         discussion_data['tag_id'] = discussion.tag_id
         discussion_data['title'] = discussion.title
         discussion_data['description'] = discussion.description
@@ -257,9 +255,10 @@ def get_discussion_by_id(discussion_id):
     #get discussion by id
     discussion = Discussions.query.filter_by(discussion_id=discussion_id).first()
     if not discussion:
-        return jsonify({'message': 'discussion does not exist'})
+        return make_response('not found', 404, {'Discussion': 'discussion not found'})
     result = {}
     result['discussion_id'] = discussion.discussion_id
+    result['user_id'] = discussion.user_id
     result['tag_id'] = discussion.tag_id
     result['title'] = discussion.title
     result['description'] = discussion.description
@@ -280,7 +279,7 @@ def get_discussion_by_id(discussion_id):
 @app.route("/discussions", methods=['POST'])
 @cross_origin()
 @token_required
-def post_discussion():
+def post_discussion(current_user):
     #create new discussion, if tag does not exist, it will be created
     if request.method == 'POST':
         discussion = request.get_json()
@@ -296,6 +295,7 @@ def post_discussion():
             #tag = Tags.query.filter_by(tag_name=discussion['tag_name']).first()
 
         new_discussion = Discussions(
+            user_id=current_user.user_id,
             tag_id=tag.tag_id,
             title=discussion['title'],
             description=discussion['description']
@@ -306,6 +306,7 @@ def post_discussion():
 
         result = {}
         result['discussion_id'] = new_discussion.discussion_id
+        result['user_id'] = new_discussion.user_id
         result['tag_id'] = new_discussion.tag_id
         result['title'] = new_discussion.title
         result['description'] = new_discussion.description
@@ -315,10 +316,12 @@ def post_discussion():
 @app.route("/discussion/<discussion_id>", methods=['DELETE'])
 @cross_origin()
 @token_required
-def delete_discussion(discussion_id):
+def delete_discussion(discussion_id, current_user):
     discussion = Discussions.query.filter_by(discussion_id=discussion_id).first()
     if not discussion:
-       return jsonify({'message': 'discussion with specified id does not exist'})
+        return make_response('not found', 404, {'Discussion': 'discussion not found'})
+    if discussion.user_id != current_user.user_id:
+        return make_response('Delete prohibited', 401, {'Discussion': 'you are not allowed to delete this'})
     db.session.delete(discussion)
     db.session.commit()
     return jsonify({'message': 'successfull delete'})
@@ -337,15 +340,23 @@ def post_comment(discussion_id, current_user):
     )
     db.session.add(new_comment)
     db.session.commit()
-    return jsonify({'message': 'comment created'})#refresh with comment?
+    db.session.refresh(new_comment)
+    result = {}
+    result['comment_id'] = new_comment.comment_id
+    result['discussion_id'] = new_comment.discussion_id
+    result['title'] = new_comment.title
+    result['description'] = new_comment.description
+    return jsonify(result)
 
 @app.route("/comment/<comment_id>", methods=['DELETE'])
 @cross_origin()
 @token_required
-def delete_discussion(comment_id):
+def delete_comment(comment_id, current_user):
     comment = Comments.query.filter_by(comment_id=comment_id).first()
     if not comment:
-       return jsonify({'message': 'comment with specified id does not exist'})
+        return make_response('Comment', 404, {'Comment': 'comment not found'})
+    if comment.user_id != current_user.user_id:
+        return make_response('Delete prohibited', 401, {'Discussion': 'you are not allowed to delete this'})
     db.session.delete(comment)
     db.session.commit()
     return jsonify({'message': 'successfull delete'})
