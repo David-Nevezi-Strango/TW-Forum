@@ -221,11 +221,11 @@ def get_tag_by_id(tag_id):
     result['tag_name'] = tag.tag_name
     return jsonify(result)
 
-@app.route("/preferences/<user_id>", methods=['GET'])
+@app.route("/preferences", methods=['GET'])
 @cross_origin()
 @token_required
-def get_preferences(user_id):
-    preferences = Preferences.query.filter_by(user_id=user_id).all()
+def get_preferences(current_user):
+    preferences = Preferences.query.filter_by(user_id=current_user.user_id).all()
     result = []
     for preference in preferences:
         preference_data = {}
@@ -234,6 +234,28 @@ def get_preferences(user_id):
         tag = Tags.query.filter_by(tag_id=preference.tag_id).first()
         preference_data['tag_name'] = tag.tag_name
         result.append(preference_data)
+    return jsonify(result)
+
+@app.route("/preferences", methods=['POST'])
+@cross_origin()
+@token_required
+def post_preference(current_user):
+    preference = request.get_json()
+    new_preference = Preferences(
+        user_id=current_user.user_id,
+        tag_id=preference['tag_id']
+    )
+    db.session.add(new_preference)
+    db.session.commit()
+    db.session.refresh(new_preference)
+
+    result = {}
+    result['preference_id'] = new_preference.preference_id
+    result['user_id'] = new_preference.user_id
+    result['tag_id'] = new_preference.tag_id
+    tag = Tags.query.filter_by(tag_id=preference.tag_id).first()
+    result['tag_name'] = tag.tag_name
+
     return jsonify(result)
 
 @app.route("/discussions/<tag_id>", methods=['GET'])
@@ -290,39 +312,38 @@ def get_discussion_by_id(discussion_id):
 @token_required
 def post_discussion(current_user):
     #create new discussion, if tag does not exist, it will be created
-    if request.method == 'POST':
-        discussion = request.get_json()
-        print(discussion)
-        tag = Tags.query.filter_by(tag_name=discussion['tag_name']).first()
-        if tag is None:
-            tag = Tags(
-                tag_name=discussion['tag_name']
-            )
-            db.session.add(tag)
-            db.session.commit()
-            db.session.refresh(tag)
-            #tag = Tags.query.filter_by(tag_name=discussion['tag_name']).first()
-
-        new_discussion = Discussions(
-            user_id=current_user.user_id,
-            tag_id=tag.tag_id,
-            title=discussion['title'],
-            description=discussion['description']
+    discussion = request.get_json()
+    #print(discussion)
+    tag = Tags.query.filter_by(tag_name=discussion['tag_name']).first()
+    if tag is None:
+        tag = Tags(
+            tag_name=discussion['tag_name']
         )
-        db.session.add(new_discussion)
+        db.session.add(tag)
         db.session.commit()
-        db.session.refresh(new_discussion)
+        db.session.refresh(tag)
+        #tag = Tags.query.filter_by(tag_name=discussion['tag_name']).first()
 
-        result = {}
-        result['discussion_id'] = new_discussion.discussion_id
-        result['user_id'] = new_discussion.user_id
-        user = Users.query.filter_by(user_id=new_discussion.user_id).first()
-        result['username'] = user.username
-        result['tag_id'] = new_discussion.tag_id
-        result['title'] = new_discussion.title
-        result['description'] = new_discussion.description
-        print(result)
-        return jsonify(result)
+    new_discussion = Discussions(
+        user_id=current_user.user_id,
+        tag_id=tag.tag_id,
+        title=discussion['title'],
+        description=discussion['description']
+    )
+    db.session.add(new_discussion)
+    db.session.commit()
+    db.session.refresh(new_discussion)
+
+    result = {}
+    result['discussion_id'] = new_discussion.discussion_id
+    result['user_id'] = new_discussion.user_id
+    user = Users.query.filter_by(user_id=new_discussion.user_id).first()
+    result['username'] = user.username
+    result['tag_id'] = new_discussion.tag_id
+    result['title'] = new_discussion.title
+    result['description'] = new_discussion.description
+    print(result)
+    return jsonify(result)
 
 @app.route("/discussion/<discussion_id>", methods=['DELETE'])
 @cross_origin()
