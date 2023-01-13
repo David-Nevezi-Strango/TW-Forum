@@ -77,22 +77,23 @@ def token_required(f):
    def decorator(*args, **kwargs):
        token = None
        if 'x-access-tokens' in request.headers:
-           token = request.headers['x-access-tokens']
+           print(request.headers)
+           token = request.headers['x-access-tokens'][7:]
        if not token:
-           return jsonify({'message': 'a valid token is missing'})
+           return make_response('could not verify', 401,{'message': 'a valid token is missing'})
        cutoff = (datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
        Blacklisttoken.query.filter(Blacklisttoken.blacklisted_on <= cutoff).delete()
        db.session.commit()
        check_token = Blacklisttoken.query.filter_by(token=token).first()
        if check_token:
-           return jsonify({'message': 'token is blacklisted'})
+           return make_response('could not verify', 401,{'message': 'token is blacklisted'})
        try:
+           print(token)
            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
            current_user = Users.query.filter_by(user_id=data['user_id']).first()
-           print(data,current_user)
        except Exception as e:
            print(e)
-           return jsonify({'message': 'token is invalid'})
+           return make_response('could not verify', 401,{'message': 'token is invalid'})
        return f(current_user, *args, **kwargs)
    return decorator
 
@@ -107,6 +108,8 @@ def login_user():
    if check_password_hash(user.password, auth.password):
        data = {}
        token = jwt.encode({'user_id' : user.user_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=50)}, app.config['SECRET_KEY'], "HS256")
+       print(token)
+       print(jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"]))
        data['token'] = token
        data['username'] = user.username
        data['user_id'] = user.user_id
