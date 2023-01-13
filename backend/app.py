@@ -221,6 +221,21 @@ def get_tag_by_id(tag_id):
     result['tag_name'] = tag.tag_name
     return jsonify(result)
 
+@app.route("/preferences/<user_id>", methods=['GET'])
+@cross_origin()
+@token_required
+def get_preferences(user_id):
+    preferences = Preferences.query.filter_by(user_id=user_id).all()
+    result = []
+    for preference in preferences:
+        preference_data = {}
+        preference_data['preference_id'] = preference.preference_id
+        preference_data['tag_id'] = preference.tag_id
+        tag = Tags.query.filter_by(tag_id=preference.tag_id).first()
+        preference_data['tag_name'] = tag.tag_name
+        result.append(preference_data)
+    return jsonify(result)
+
 @app.route("/discussions/<tag_id>", methods=['GET'])
 @cross_origin()
 def get_discussionlist_by_tag(tag_id):
