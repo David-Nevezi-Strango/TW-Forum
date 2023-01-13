@@ -108,8 +108,6 @@ def login_user():
    if check_password_hash(user.password, auth.password):
        data = {}
        token = jwt.encode({'user_id' : user.user_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=50)}, app.config['SECRET_KEY'], "HS256")
-       print(token)
-       print(jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"]))
        data['token'] = token
        data['username'] = user.username
        data['user_id'] = user.user_id
@@ -248,6 +246,8 @@ def get_discussionlist_by_tag(tag_id):
         discussion_data = {}
         discussion_data['discussion_id'] = discussion.discussion_id
         discussion_data['user_id'] = discussion.user_id
+        user = Users.query.filter_by(user_id=discussion.user_id).first()
+        discussion_data['username'] = user.username
         discussion_data['tag_id'] = discussion.tag_id
         discussion_data['title'] = discussion.title
         discussion_data['description'] = discussion.description
@@ -264,6 +264,8 @@ def get_discussion_by_id(discussion_id):
     result = {}
     result['discussion_id'] = discussion.discussion_id
     result['user_id'] = discussion.user_id
+    user = Users.query.filter_by(user_id=discussion.user_id).first()
+    result['username'] = user.username
     result['tag_id'] = discussion.tag_id
     result['title'] = discussion.title
     result['description'] = discussion.description
@@ -274,6 +276,8 @@ def get_discussion_by_id(discussion_id):
         comment_data = {}
         comment_data['comment_id'] = comment.comment_id
         comment_data['user_id'] = comment.user_id
+        user = Users.query.filter_by(user_id=comment.user_id).first()
+        comment_data['username'] = user.username
         comment_data['discussion_id'] = comment.discussion_id
         comment_data['date'] = comment.date
         comment_data['text'] = comment.text
@@ -312,6 +316,8 @@ def post_discussion(current_user):
         result = {}
         result['discussion_id'] = new_discussion.discussion_id
         result['user_id'] = new_discussion.user_id
+        user = Users.query.filter_by(user_id=new_discussion.user_id).first()
+        result['username'] = user.username
         result['tag_id'] = new_discussion.tag_id
         result['title'] = new_discussion.title
         result['description'] = new_discussion.description
@@ -338,7 +344,7 @@ def post_comment(discussion_id, current_user):
     #add new comment to discussion
     comment = request.get_json()
     new_comment = Comments(
-        user_id= current_user.user_id, #comment['user_id'],
+        user_id=current_user.user_id, #comment['user_id'],
         discussion_id=discussion_id, #comment['discussion_id'],
         date=comment['date'],
         text=comment['text']
@@ -348,6 +354,9 @@ def post_comment(discussion_id, current_user):
     db.session.refresh(new_comment)
     result = {}
     result['comment_id'] = new_comment.comment_id
+    result['user_id'] = new_comment.user_id
+    user = Users.query.filter_by(user_id=new_comment.user_id).first()
+    result['username'] = user.username
     result['discussion_id'] = new_comment.discussion_id
     result['title'] = new_comment.title
     result['description'] = new_comment.description
