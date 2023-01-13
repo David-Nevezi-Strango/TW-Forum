@@ -100,23 +100,26 @@ def token_required(f):
 
 @app.route('/login', methods=['POST'])
 def login_user():
-   auth = request.authorization
-   print(auth)
-   if not auth or not auth.username or not auth.password:
-       return make_response('could not verify', 401, {'Authentication': 'login required'})
-   user = Users.query.filter_by(username=auth.username).first()
-   if check_password_hash(user.password, auth.password):
-       data = {}
-       token = jwt.encode({'user_id' : user.user_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=50)}, app.config['SECRET_KEY'], "HS256")
-       data['token'] = token
-       data['username'] = user.username
-       data['user_id'] = user.user_id
-       data['email'] = user.mail
-       data['name'] = user.name
-       data['last_notification_id'] = user.last_notification_id
-       session['username'] = user.username
-       return jsonify(data)
-   return make_response('could not verify',  401, {'Authentication': '"login required'})
+    auth = request.authorization
+    print(auth)
+    if not auth or not auth.username or not auth.password:
+        return make_response('could not verify', 401, {'Authentication': 'missing username and/or password'})
+    try:
+        user = Users.query.filter_by(username=auth.username).first()
+        if check_password_hash(user.password, auth.password):
+           data = {}
+           token = jwt.encode({'user_id' : user.user_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=50)}, app.config['SECRET_KEY'], "HS256")
+           data['token'] = token
+           data['username'] = user.username
+           data['user_id'] = user.user_id
+           data['email'] = user.mail
+           data['name'] = user.name
+           data['last_notification_id'] = user.last_notification_id
+           session['username'] = user.username
+           return jsonify(data)
+    except:
+        return make_response('could not verify', 401, {'Authentication': 'user has not been found'})
+    return make_response('could not verify',  401, {'Authentication': '"login required'})
 
 @app.route('/signup', methods=['POST'])
 def signup_post():
