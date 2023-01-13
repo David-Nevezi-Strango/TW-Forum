@@ -59,7 +59,7 @@ class Comments(db.Model):
     date = db.Column(db.Date, nullable=False)
     text = db.Column(db.String(500), nullable=False)
 
-class BlackListToken(db.Model):
+class Blacklisttoken(db.Model):
     token_id = db.Column(db.Integer, primary_key=True)
     token = db.Column(db.String(500), unique=True, nullable=False)
     blacklisted_on = db.Column(db.DateTime, nullable=False)
@@ -81,15 +81,17 @@ def token_required(f):
        if not token:
            return jsonify({'message': 'a valid token is missing'})
        cutoff = (datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
-       BlackListToken.query.filter(BlackListToken.blacklisted_on <= cutoff).delete()
+       Blacklisttoken.query.filter(Blacklisttoken.blacklisted_on <= cutoff).delete()
        db.session.commit()
-       check_token = BlackListToken.query.filter_by(token=token).first()
+       check_token = Blacklisttoken.query.filter_by(token=token).first()
        if check_token:
-           return jsonify({'message': 'token is invalid'})
+           return jsonify({'message': 'token is blacklisted'})
        try:
            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
            current_user = Users.query.filter_by(user_id=data['user_id']).first()
-       except:
+           print(data,current_user)
+       except Exception as e:
+           print(e)
            return jsonify({'message': 'token is invalid'})
        return f(current_user, *args, **kwargs)
    return decorator
@@ -149,7 +151,7 @@ def logout():
         resp = jwt.decode(auth_token, app.config['SECRET_KEY'], algorithms=["HS256"])
         if not isinstance(resp, str):
             # mark the token as blacklisted
-            blacklist_token = BlackListToken(token=auth_token, blacklisted_on=datetime.datetime.now())
+            blacklist_token = Blacklisttoken(token=auth_token, blacklisted_on=datetime.datetime.now())
             try:
                 # insert the token
                 db.session.add(blacklist_token)

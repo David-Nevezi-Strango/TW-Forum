@@ -16,7 +16,7 @@ export class CommentService {
     return this.http.get<Comment[]>(`${this.url}/${id}`)
   }
 
-  addDiscussion(discussion:Object): Observable<Comment> {
-    return this.http.post<Comment>(this.url, discussion)
+  addComment(comment:Object): Observable<Comment> {
+    return this.http.post<Comment>(this.url, comment)
   }
 }
