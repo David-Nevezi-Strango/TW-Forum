@@ -28,6 +28,6 @@ export class AddCommentComponent implements OnInit {
     const id=Number(this.route.snapshot.paramMap.get('id'));
     let date = new Date().toLocaleDateString("en-US")
     let data={"date":date,"text":this.comment}
-    this.commentService.addComment(id,data).subscribe()
+    this.commentService.addComment(id,data).subscribe(response=>{window.location.reload()})
   }
 }

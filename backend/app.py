@@ -304,7 +304,7 @@ def get_discussion_by_id(discussion_id):
         user = Users.query.filter_by(user_id=comment.user_id).first()
         comment_data['username'] = user.username
         comment_data['discussion_id'] = comment.discussion_id
-        date = datetime.datetime.strptime(comment.date, "%Y-%M-%D")
+        date = comment.date
         comment_data['date'] = "{}/{}/{}".format(date.month, date.day,date.year)
         comment_data['text'] = comment.text
         result['comments'].append(comment_data)
