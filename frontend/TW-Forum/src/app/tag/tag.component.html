@@ -1,4 +1,5 @@
 <mat-card class="listcontainer">
+    <mat-card-title><button mat-raised-button color="primary" (click)="openDialog()"><mat-icon>add</mat-icon>Pune o întrebare</button></mat-card-title>
     <mat-list>
         <mat-list-item *ngFor="let tag of tags">
             <a routerLink="/discussions/{{tag.tag_id}}">{{tag.tag_name}}</a>

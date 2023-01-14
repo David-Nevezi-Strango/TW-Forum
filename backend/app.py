@@ -86,7 +86,7 @@ def token_required(f):
        db.session.commit()
        check_token = Blacklisttoken.query.filter_by(token=token).first()
        if check_token:
-           return make_response('blacklisted token, 401,{'message': 'token is blacklisted'})
+           return make_response('blacklisted token', 401,{'message': 'token is blacklisted'})
        try:
            print(token)
            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])

@@ -2,7 +2,7 @@
     <mat-card-header>
     <div mat-card-avatar class="example-header-image"></div>
       <mat-card-title>{{this.discussion?.title}}</mat-card-title>
-      <mat-card-subtitle>Start</mat-card-subtitle>
+      <mat-card-subtitle>{{this.discussion?.username}}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
         <p>
@@ -22,7 +22,7 @@
     <mat-card class="comment">
         <mat-card-header>
             <div mat-card-avatar class="example-header-image"></div>
-            <mat-card-subtitle>Start</mat-card-subtitle>
+            <mat-card-subtitle>{{comment.username}}</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
             <p>

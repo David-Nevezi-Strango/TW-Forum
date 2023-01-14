@@ -4,4 +4,5 @@ export interface Comment{
     discussion_id:number;
     date:string;
     text:string;
+    username:string
 }

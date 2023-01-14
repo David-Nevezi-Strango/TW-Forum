@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { Comment } from 'src/models/Comment';
-import { COMMENTS } from 'src/mock-data/mock-comments';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
@@ -16,7 +15,13 @@ export class CommentService {
     return this.http.get<Comment[]>(`${this.url}/${id}`)
   }
 
-  addComment(comment:Object): Observable<Comment> {
-    return this.http.post<Comment>(this.url, comment)
+  addComment(id:number,comment:Object): Observable<Comment> {
+    let httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'x-access-tokens': 'Bearer ' + localStorage.getItem("token")
+      })
+    };
+    return this.http.post<Comment>(`${this.url}/${id}`, comment,httpOptions)
   }
 }

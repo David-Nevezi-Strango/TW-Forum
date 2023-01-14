@@ -6,6 +6,7 @@ export interface Discussion{
     title:string;
     description:string;
     comments:Comment[]
+    username:string
 
     /*
     constructor(discussion_id:number,tag_id:number,title:string,content:string,comments:Comment[]){
