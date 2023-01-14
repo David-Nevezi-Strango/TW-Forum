@@ -55,7 +55,7 @@ class Discussions(db.Model):
 class Comments(db.Model):
     comment_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
-    discussion_id = db.Column(db.Integer, db.ForeignKey('discussion.discussion_id'), nullable=False)
+    discussion_id = db.Column(db.Integer, db.ForeignKey('discussions.discussion_id'), nullable=False)
     date = db.Column(db.Date, nullable=False)
     text = db.Column(db.String(500), nullable=False)
 
@@ -77,7 +77,7 @@ def token_required(f):
    def decorator(*args, **kwargs):
        token = None
        if 'x-access-tokens' in request.headers:
-           print(request.headers)
+           #(request.headers)
            token = request.headers['x-access-tokens'][7:]
        if not token:
            return make_response('missing token', 401,{'message': 'a valid token is missing'})
@@ -88,7 +88,7 @@ def token_required(f):
        if check_token:
            return make_response('blacklisted token', 401,{'message': 'token is blacklisted'})
        try:
-           print(token)
+           #print(token)
            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
            current_user = Users.query.filter_by(user_id=data['user_id']).first()
        except Exception as e:
@@ -101,7 +101,7 @@ def token_required(f):
 @app.route('/login', methods=['POST'])
 def login_user():
     auth = request.authorization
-    print(auth)
+    #print(auth)
     if not auth or not auth.username or not auth.password:
         return make_response('missing credentials', 401, {'Authentication': 'missing username and/or password'})
     try:
@@ -351,7 +351,7 @@ def post_discussion(current_user):
 @app.route("/discussion/<discussion_id>", methods=['DELETE'])
 @cross_origin()
 @token_required
-def delete_discussion(discussion_id, current_user):
+def delete_discussion(current_user, discussion_id):
     discussion = Discussions.query.filter_by(discussion_id=discussion_id).first()
     if not discussion:
         return make_response('not found', 404, {'Discussion': 'discussion not found'})
@@ -364,7 +364,7 @@ def delete_discussion(discussion_id, current_user):
 @app.route("/discussion/<discussion_id>", methods=['POST'])
 @cross_origin()
 @token_required
-def post_comment(discussion_id, current_user):
+def post_comment(current_user, discussion_id):
     #add new comment to discussion
     comment = request.get_json()
     new_comment = Comments(
@@ -389,7 +389,7 @@ def post_comment(discussion_id, current_user):
 @app.route("/comment/<comment_id>", methods=['DELETE'])
 @cross_origin()
 @token_required
-def delete_comment(comment_id, current_user):
+def delete_comment(current_user, comment_id):
     comment = Comments.query.filter_by(comment_id=comment_id).first()
     if not comment:
         return make_response('Comment', 404, {'Comment': 'comment not found'})
