@@ -9,7 +9,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class LoginComponent implements OnInit {
 
-  constructor(private authenticationService:AuthenticationService,private _snackBar: MatSnackBar) { }
+  constructor(private authenticationService:AuthenticationService,private snackbar: MatSnackBar) { }
 
   username:string=""
   password:string=""
@@ -24,7 +24,9 @@ export class LoginComponent implements OnInit {
         window.location.reload()
       },
       error:error=>{
-        console.log('There was an error authenticating',error)
+        this.snackbar.open('Numele de utilizator sau parola sunt incorecte!', '', {
+          duration: 3000
+        });
       }
     })
   }

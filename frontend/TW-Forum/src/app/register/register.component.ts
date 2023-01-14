@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from '../services/authentication.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-register',
@@ -8,7 +9,7 @@ import { AuthenticationService } from '../services/authentication.service';
 })
 export class RegisterComponent implements OnInit {
 
-  constructor(private authenticationService:AuthenticationService) { }
+  constructor(private authenticationService:AuthenticationService,private snackbar:MatSnackBar) { }
 
   email:string=""
   username:string=""
@@ -27,7 +28,9 @@ export class RegisterComponent implements OnInit {
         window.location.reload()
       },
       error:error=>{
-        console.log('There was an error authenticating',error)
+        this.snackbar.open('Un cont cu acea adresă de e-mail există deja.', '', {
+          duration: 3000
+        });
       }
     })
 
