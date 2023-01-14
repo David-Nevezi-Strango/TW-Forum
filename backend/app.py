@@ -80,20 +80,20 @@ def token_required(f):
            print(request.headers)
            token = request.headers['x-access-tokens'][7:]
        if not token:
-           return make_response('could not verify', 401,{'message': 'a valid token is missing'})
+           return make_response('missing token', 401,{'message': 'a valid token is missing'})
        cutoff = (datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
        Blacklisttoken.query.filter(Blacklisttoken.blacklisted_on <= cutoff).delete()
        db.session.commit()
        check_token = Blacklisttoken.query.filter_by(token=token).first()
        if check_token:
-           return make_response('could not verify', 401,{'message': 'token is blacklisted'})
+           return make_response('blacklisted token, 401,{'message': 'token is blacklisted'})
        try:
            print(token)
            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
            current_user = Users.query.filter_by(user_id=data['user_id']).first()
        except Exception as e:
            print(e)
-           return make_response('could not verify', 401,{'message': 'token is invalid'})
+           return make_response('invalid token', 401,{'message': 'token is invalid'})
        return f(current_user, *args, **kwargs)
    return decorator
 
@@ -103,7 +103,7 @@ def login_user():
     auth = request.authorization
     print(auth)
     if not auth or not auth.username or not auth.password:
-        return make_response('could not verify', 401, {'Authentication': 'missing username and/or password'})
+        return make_response('missing credentials', 401, {'Authentication': 'missing username and/or password'})
     try:
         user = Users.query.filter_by(username=auth.username).first()
         if check_password_hash(user.password, auth.password):
@@ -119,7 +119,7 @@ def login_user():
            return jsonify(data)
     except:
         return make_response('could not verify', 401, {'Authentication': 'user has not been found'})
-    return make_response('could not verify',  401, {'Authentication': '"login required'})
+    return make_response('wrong password',  401, {'Authentication': '"login required'})
 
 @app.route('/signup', methods=['POST'])
 def signup_post():
