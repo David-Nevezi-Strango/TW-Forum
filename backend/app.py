@@ -304,7 +304,8 @@ def get_discussion_by_id(discussion_id):
         user = Users.query.filter_by(user_id=comment.user_id).first()
         comment_data['username'] = user.username
         comment_data['discussion_id'] = comment.discussion_id
-        comment_data['date'] = comment.date
+        date = datetime.datetime.strptime(comment.date, "%Y-%M-%D")
+        comment_data['date'] = "{}/{}/{}".format(date.month, date.day,date.year)
         comment_data['text'] = comment.text
         result['comments'].append(comment_data)
 
@@ -367,10 +368,12 @@ def delete_discussion(current_user, discussion_id):
 def post_comment(current_user, discussion_id):
     #add new comment to discussion
     comment = request.get_json()
+    print(comment['date'])
+    date = datetime.datetime.strptime(comment['date'], "%M/%d/%Y")
     new_comment = Comments(
         user_id=current_user.user_id, #comment['user_id'],
         discussion_id=discussion_id, #comment['discussion_id'],
-        date=comment['date'],
+        date=datetime.date(date.year, date.month, date.day),
         text=comment['text']
     )
     db.session.add(new_comment)
@@ -382,8 +385,8 @@ def post_comment(current_user, discussion_id):
     user = Users.query.filter_by(user_id=new_comment.user_id).first()
     result['username'] = user.username
     result['discussion_id'] = new_comment.discussion_id
-    result['title'] = new_comment.title
-    result['description'] = new_comment.description
+    result['date'] = new_comment.date
+    result['text'] = new_comment.text
     return jsonify(result)
 
 @app.route("/comment/<comment_id>", methods=['DELETE'])

@@ -168,4 +168,4 @@ insert into Comments (user_id, discussion_id, date, text) values
                                 (6, 7, '2019-01-06', 'text6'),
                                 (7, 7, '2019-01-07', 'text7');
 
-select * from blacklisttoken
+select * from comments
