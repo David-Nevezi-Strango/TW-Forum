@@ -17,6 +17,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar'
 import { HomeComponent } from './home/home.component';
 import { TagComponent } from './tag/tag.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import {MatMenuModule} from '@angular/material/menu'
 import { DiscussionComponent } from './discussion/discussion.component'
 import { DiscussionDetailComponent } from './discussion-detail/discussion-detail.component';
 import { AddCommentComponent } from './add-comment/add-comment.component';
@@ -53,7 +54,8 @@ import { RegisterComponent } from './register/register.component';
     MatInputModule,
     FormsModule,
     MatDialogModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatMenuModule
   ],
   providers: [],
   bootstrap: [AppComponent]

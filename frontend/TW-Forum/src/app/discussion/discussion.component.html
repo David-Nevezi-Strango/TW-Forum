@@ -5,7 +5,7 @@
     <button mat-raised-button color="primary" (click)="openDialog()"><mat-icon>add</mat-icon>Pune o întrebare</button>
     <mat-list>
         <mat-list-item *ngFor="let discussion of discussions">
-            <a routerLink="/discussion/{{discussion.discussion_id}}">{{discussion.title}}</a>
+            <a routerLink="/discussion/{{discussion.discussion_id}}">{{discussion.title}}</a> <span style="color:grey"> - Creat de {{discussion.username}}</span>
             <mat-divider></mat-divider>
         </mat-list-item>
     </mat-list>
