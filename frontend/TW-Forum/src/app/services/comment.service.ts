@@ -10,6 +10,7 @@ export class CommentService {
 
   constructor(private http: HttpClient) { }
   url="http://localhost:5000/discussion"
+  comment_url="http://localhost:5000"
 
   getComments(id:number):Observable<Comment[]>{
     return this.http.get<Comment[]>(`${this.url}/${id}`)
@@ -23,5 +24,15 @@ export class CommentService {
       })
     };
     return this.http.post<Comment>(`${this.url}/${id}`, comment,httpOptions)
+  }
+
+  deleteComment(id:number){
+    let httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'x-access-tokens': 'Bearer ' + localStorage.getItem("token")
+      })
+    };
+    return this.http.delete<void>(`${this.comment_url}/${id}`)
   }
 }

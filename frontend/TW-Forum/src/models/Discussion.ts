@@ -2,6 +2,7 @@ import { Comment } from "./Comment";
 
 export interface Discussion{
     discussion_id:number;
+    user_id:number;
     tag_id:number;
     title:string;
     description:string;

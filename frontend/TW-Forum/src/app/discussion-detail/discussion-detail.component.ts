@@ -17,16 +17,37 @@ export class DiscussionDetailComponent implements OnInit {
   constructor(private route: ActivatedRoute,private location: Location,private discussionService:DiscussionService,private commentService:CommentService,public dialog: MatDialog) { }
   discussion:Discussion|undefined
   display=false
+  belongs_to_current_user=false
+  user_id:number|undefined
 
   ngOnInit(): void {
     this.getDiscussion()
+    this.getUserID()
+  }
+
+  getUserID(){
+    let user_id_str=localStorage.getItem("user_id")
+    let user_id:number|undefined
+    if(user_id_str!=null){
+      user_id=parseInt(user_id_str)
+      this.user_id=user_id
+    }
   }
 
   getDiscussion():void{
     const id=Number(this.route.snapshot.paramMap.get('id'));
     this.discussionService.getDiscussion(id).subscribe(discussion=>{
       this.discussion=discussion
+      this.belongs()
     })
+  }
+
+  deleteDiscussion(){
+    this.discussionService.deleteDiscussion(this.discussion?.discussion_id!).subscribe(response=>console.log(response))
+  }
+
+  deleteComment(id:number){
+    this.commentService.deleteComment(id).subscribe(response=>console.log(response))
   }
 
   toggleAddComment(){
@@ -38,6 +59,21 @@ export class DiscussionDetailComponent implements OnInit {
       const dialogRef = this.dialog.open(LoginComponent, {
       
       });
+    }
+  }
+
+  belongs(){
+    let user_id_str=localStorage.getItem("user_id")
+    let user_id:number|undefined
+    if(user_id_str!=null){
+      user_id=parseInt(user_id_str)
+    }
+    else{return}
+    if(user_id==this.discussion?.user_id){
+      this.belongs_to_current_user=true
+    }
+    else{
+      this.belongs_to_current_user=false
     }
   }
 }

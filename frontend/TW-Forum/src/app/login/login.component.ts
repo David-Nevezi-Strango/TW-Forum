@@ -21,6 +21,7 @@ export class LoginComponent implements OnInit {
     this.authenticationService.login(this.username,this.password).subscribe({
       next:data=>{
         localStorage.setItem("token",data.token)
+        localStorage.setItem("user_id",data.user_id)
         window.location.reload()
       },
       error:error=>{

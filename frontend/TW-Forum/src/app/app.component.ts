@@ -3,7 +3,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { AuthenticationService } from './services/authentication.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +13,7 @@ export class AppComponent {
   title = 'TW-Forum';
   opened=false;
   authenticated=false
-  constructor(public dialog: MatDialog,private authenticationService:AuthenticationService,private snackbar:MatSnackBar){}
+  constructor(public dialog: MatDialog,private authenticationService:AuthenticationService){}
 
   ngOnInit():void{
     let token=localStorage.getItem("token")

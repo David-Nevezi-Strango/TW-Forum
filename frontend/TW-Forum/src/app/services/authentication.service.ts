@@ -29,6 +29,7 @@ export class AuthenticationService {
 
   logout(){
     localStorage.setItem("token",'')
+    localStorage.setItem("user_id",'')
     window.location.reload()
   }
 }
