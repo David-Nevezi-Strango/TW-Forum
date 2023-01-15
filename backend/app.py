@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, make_response, request, session
+from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import asc, create_engine, func, desc
@@ -51,6 +52,7 @@ class Discussions(db.Model):
     tag_id = db.Column(db.Integer, db.ForeignKey('tags.tag_id'), nullable=False)
     title = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(500), nullable=False)
+    children = relationship("Comments", cascade="all,delete", backref="discussions")
 
 class Comments(db.Model):
     comment_id = db.Column(db.Integer, primary_key=True)
