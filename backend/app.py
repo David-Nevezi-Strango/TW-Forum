@@ -238,7 +238,7 @@ def get_preferences(current_user):
         preference_data['tag_name'] = tag.tag_name
         result.append(preference_data)
     return jsonify(result)
-
+ 
 @app.route("/preferences", methods=['POST'])
 @cross_origin()
 @token_required
