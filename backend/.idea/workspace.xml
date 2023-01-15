@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1e185878-9683-4154-b136-595733751b64" name="Changes" comment="Fixed POST comment">
+    <list default="true" id="1e185878-9683-4154-b136-595733751b64" name="Changes" comment="Fixed date for comment">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/script.sql" beforeDir="false" afterPath="$PROJECT_DIR$/script.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -94,7 +93,8 @@
       <workItem from="1673624411717" duration="568000" />
       <workItem from="1673625637604" duration="436000" />
       <workItem from="1673705197350" duration="2297000" />
-      <workItem from="1673707671302" duration="1589000" />
+      <workItem from="1673707671302" duration="1616000" />
+      <workItem from="1673792487746" duration="1016000" />
     </task>
     <task id="LOCAL-00001" summary="First try of backend">
       <created>1670774711951</created>
@@ -257,7 +257,14 @@
       <option name="project" value="LOCAL" />
       <updated>1673707487302</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Fixed date for comment">
+      <created>1673709274275</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1673709274275</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -297,7 +304,8 @@
     <MESSAGE value="Handled incorrect or missing login" />
     <MESSAGE value="Refactored error messages" />
     <MESSAGE value="Fixed POST comment" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed POST comment" />
+    <MESSAGE value="Fixed date for comment" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed date for comment" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/backend$Flask__app_py_.coverage" NAME="Flask (app.py) Coverage Results" MODIFIED="1672842076044" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
