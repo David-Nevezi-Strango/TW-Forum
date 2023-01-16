@@ -22,7 +22,7 @@ export class LoginComponent implements OnInit {
       next:data=>{
         localStorage.setItem("token",data.token)
         localStorage.setItem("user_id",data.user_id)
-        console.log(data.user_id)
+        localStorage.setItem("notification_id",data.last_notification_id)
         window.location.reload()
       },
       error:error=>{

@@ -16,8 +16,15 @@
     <span *ngIf="authenticated==true">
       <button mat-button [matMenuTriggerFor]="notifications"><mat-icon>notifications</mat-icon></button>
       <mat-menu #notifications="matMenu">
-        <button mat-menu-item>Item 1</button>
-        <button mat-menu-item>Item 2</button>
+        Notifications
+        <mat-divider></mat-divider>
+        <div *ngFor="let n of notification_list">
+          <div style="margin:1vw">
+            <mat-icon>notifications</mat-icon>
+            {{n.text}}<br>
+          </div>
+          <mat-divider></mat-divider>
+        </div>
       </mat-menu>
 
       <button mat-raised-button (click)="logout()">Deconectare</button>

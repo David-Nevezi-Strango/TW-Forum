@@ -48,7 +48,6 @@ export class DiscussionDetailComponent implements OnInit {
 
   deleteComment(id:number){
     this.commentService.deleteComment(id).subscribe(response=>{
-      console.log(response);
       window.location.reload()
     })
   }
@@ -67,7 +66,6 @@ export class DiscussionDetailComponent implements OnInit {
 
   belongs(){
     let user_id_str=localStorage.getItem("user_id")
-    console.log(user_id_str)
     let user_id:number|undefined
     if(user_id_str!=null){
       user_id=parseInt(user_id_str)

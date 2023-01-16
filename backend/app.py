@@ -52,7 +52,7 @@ class Discussions(db.Model):
     tag_id = db.Column(db.Integer, db.ForeignKey('tags.tag_id'), nullable=False)
     title = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(500), nullable=False)
-    children = relationship("Comments", cascade="all,delete", backref="discussions")
+    #children = relationship("Comments", cascade="all,delete", backref="discussions")
 
 class Comments(db.Model):
     comment_id = db.Column(db.Integer, primary_key=True)
@@ -190,7 +190,7 @@ def logout():
 @app.route("/notifications/<notification_id>", methods=['GET'])
 @cross_origin()
 @token_required
-def get_notifications(notification_id):
+def get_notifications(current_user,notification_id):
     ref_notification = Notifications.query.filter_by(notification_id=notification_id).first()
     ref_date = ref_notification.date
     notifications = Notifications.query.filter(Notifications.date > ref_date).all()
