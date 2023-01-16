@@ -190,7 +190,7 @@ def logout():
 @app.route("/notifications/<notification_id>", methods=['GET'])
 @cross_origin()
 @token_required
-def get_notifications(current_user,notification_id):
+def get_notifications(current_user, notification_id):
     ref_notification = Notifications.query.filter_by(notification_id=notification_id).first()
     ref_date = ref_notification.date
     notifications = Notifications.query.filter(Notifications.date > ref_date).all()
@@ -202,6 +202,15 @@ def get_notifications(current_user,notification_id):
         data['date'] = notification.date
         result.append(data)
     return jsonify(result)
+
+@app.route("/notifications/<notification_id>", methods=['PATCH'])
+@cross_origin()
+@token_required
+def patch_notifications(current_user, notification_id):
+    user = Users.query.filter_by(user_id=current_user.user_id).first()
+    user.last_notification_id = notification_id
+    db.session.commit()
+    return jsonify({'status':'success'})
 
 @app.route("/tags", methods=['GET'])
 @cross_origin()
