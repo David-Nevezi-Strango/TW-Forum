@@ -78,9 +78,11 @@ def token_required(f):
    @wraps(f)
    def decorator(*args, **kwargs):
        token = None
+       print(request)
        if 'x-access-tokens' in request.headers:
-           #(request.headers)
+
            token = request.headers['x-access-tokens'][7:]
+           #print(token)
        if not token:
            return make_response('missing token', 401,{'message': 'a valid token is missing'})
        cutoff = (datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
@@ -203,10 +205,10 @@ def get_notifications(current_user, notification_id):
         result.append(data)
     return jsonify(result)
 
-@app.route("/notifications/<notification_id>", methods=['PATCH'])
+@app.route("/notifications/<notification_id>", methods=['POST'])
 @cross_origin()
 @token_required
-def patch_notifications(current_user, notification_id):
+def post_notifications(current_user, notification_id):
     user = Users.query.filter_by(user_id=current_user.user_id).first()
     user.last_notification_id = notification_id
     db.session.commit()
