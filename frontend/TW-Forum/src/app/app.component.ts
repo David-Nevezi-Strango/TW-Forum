@@ -49,12 +49,12 @@ export class AppComponent {
   }
 
   getNotifications(id:number){
-    this.notificationService.getNotifications(id).subscribe(response=>this.notification_list=response)
+    this.notificationService.getNotifications(id).subscribe(response=>{this.notification_list=response;console.log(this.notification_list)})
   }
 
   markAsRead(){
     let notification_id=this.notification_list?.slice(-1)[0].notification_id!
-    this.notificationService.updateNotification(notification_id).subscribe(response=>console.log(response))
+    this.notificationService.updateNotification(notification_id).subscribe(response=>window.location.reload())
     localStorage.setItem("notification_id",notification_id.toString())
   }
 }

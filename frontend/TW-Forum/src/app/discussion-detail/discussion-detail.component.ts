@@ -6,6 +6,7 @@ import { Discussion } from 'src/models/Discussion';
 import { CommentService } from '../services/comment.service';
 import {MatDialog, MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import { LoginComponent } from '../login/login.component';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-discussion-detail',
@@ -14,7 +15,7 @@ import { LoginComponent } from '../login/login.component';
 })
 export class DiscussionDetailComponent implements OnInit {
 
-  constructor(private route: ActivatedRoute,private location: Location,private discussionService:DiscussionService,private commentService:CommentService,public dialog: MatDialog) { }
+  constructor(private route: ActivatedRoute,private location: Location,private discussionService:DiscussionService,private commentService:CommentService,public dialog: MatDialog,private router: Router) { }
   discussion:Discussion|undefined
   display=false
   belongs_to_current_user=false
@@ -43,7 +44,7 @@ export class DiscussionDetailComponent implements OnInit {
   }
 
   deleteDiscussion(){
-    this.discussionService.deleteDiscussion(this.discussion?.discussion_id!).subscribe(response=>console.log(response))
+    this.discussionService.deleteDiscussion(this.discussion?.discussion_id!).subscribe(response=>{this.router.navigateByUrl('/home');})
   }
 
   deleteComment(id:number){

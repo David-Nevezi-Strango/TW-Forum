@@ -17,14 +17,22 @@
       <button mat-button [matMenuTriggerFor]="notifications"><mat-icon>notifications</mat-icon></button>
       <mat-menu #notifications="matMenu">
         <span style="margin:5px">Notificări</span><br>
-        <button mat-raised-button color="primary" style="margin:5px" (click)="markAsRead()">Marchează ca citit</button>
         <mat-divider></mat-divider>
-        <div *ngFor="let n of notification_list">
-          <div style="margin:1vw">
-            <mat-icon>notifications</mat-icon>
-            {{n.text}}<br>
-          </div>
+
+        <div *ngIf="notification_list?.length!>0">
+          <button mat-raised-button color="primary" style="margin:5px" (click)="markAsRead()">Marchează ca citit</button>
           <mat-divider></mat-divider>
+          <div *ngFor="let n of notification_list">
+            <div style="margin:1vw">
+              <mat-icon>notifications</mat-icon>
+              {{n.text}}<br>
+            </div>
+            <mat-divider></mat-divider>
+          </div>
+        </div>
+
+        <div *ngIf="notification_list?.length==0" style="margin:5px">
+          Nu aveți notificări noi!
         </div>
       </mat-menu>
 
