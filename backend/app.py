@@ -1,8 +1,7 @@
 from flask import Flask, jsonify, make_response, request, session
-from sqlalchemy.orm import relationship
-from werkzeug.security import generate_password_hash,check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import asc, create_engine, func, desc
+from sqlalchemy import asc, desc
 from flask_cors import CORS, cross_origin
 from functools import wraps
 import jwt
@@ -23,7 +22,7 @@ db = SQLAlchemy(app)
 CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-
+#DB Schema
 class Notifications(db.Model):
     notification_id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(250), nullable=False)
@@ -75,17 +74,20 @@ class Blacklisttoken(db.Model):
 #     return response
 
 def token_required(f):
+    #function to verify the identity of the user that sent a request
    @wraps(f)
    def decorator(*args, **kwargs):
        token = None
-       print(request)
+       #print(request)
        if 'x-access-tokens' in request.headers:
 
            token = request.headers['x-access-tokens'][7:]
            #print(token)
        if not token:
            return make_response('missing token', 401,{'message': 'a valid token is missing'})
+       #check if token is blacklisted
        cutoff = (datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+       #delete any token that is older than a day
        Blacklisttoken.query.filter(Blacklisttoken.blacklisted_on <= cutoff).delete()
        db.session.commit()
        check_token = Blacklisttoken.query.filter_by(token=token).first()
@@ -127,6 +129,7 @@ def login_user():
 
 @app.route('/signup', methods=['POST'])
 def signup_post():
+    #function to create a new user
     user = request.get_json()
     username = user['username']
     mail = user['email']
@@ -136,7 +139,7 @@ def signup_post():
     user = Users.query.filter_by(mail=mail).first()
     if user:
         return jsonify({'message': 'user already exist'})
-
+    #create new user
     last_not_id = Notifications.query.order_by(desc(Notifications.notification_id)).first()
     #print(last_not_id)
     new_user = Users(username=username, mail=mail, name=name, password=generate_password_hash(password, method='sha256'), last_notification_id=last_not_id.notification_id)
@@ -149,8 +152,10 @@ def signup_post():
 @app.route('/logout')
 @token_required
 def logout():
+    #function to log out the current_user
     # get auth token
     auth_header = request.headers.get('Authorization')
+    #if authorization header has been included
     if auth_header:
         auth_token = auth_header.split(" ")[1]
     else:
@@ -161,7 +166,7 @@ def logout():
             # mark the token as blacklisted
             blacklist_token = Blacklisttoken(token=auth_token, blacklisted_on=datetime.datetime.now())
             try:
-                # insert the token
+                # insert the token to the blacklist
                 db.session.add(blacklist_token)
                 db.session.commit()
                 responseObject = {
@@ -193,6 +198,7 @@ def logout():
 @cross_origin()
 @token_required
 def get_notifications(current_user, notification_id):
+    #get all unread notifications
     ref_notification = Notifications.query.filter_by(notification_id=notification_id).first()
     ref_date = ref_notification.date
     notifications = Notifications.query.filter(Notifications.date > ref_date).all()
@@ -209,6 +215,7 @@ def get_notifications(current_user, notification_id):
 @cross_origin()
 @token_required
 def post_notifications(current_user, notification_id):
+    #update last seen notification for current_user
     user = Users.query.filter_by(user_id=current_user.user_id).first()
     user.last_notification_id = notification_id
     db.session.commit()
@@ -217,6 +224,7 @@ def post_notifications(current_user, notification_id):
 @app.route("/tags", methods=['GET'])
 @cross_origin()
 def get_tags():
+    #get list of tags
     tags = Tags.query.all()
     result = []
     for tag in tags:
@@ -229,18 +237,23 @@ def get_tags():
 @app.route("/tags/<tag_id>", methods=['GET'])
 @cross_origin()
 def get_tag_by_id(tag_id):
+    #get a tag by id
     tag = Tags.query.filter_by(tag_id=tag_id).first()
     if not tag:
         return make_response('not found', 404, {'Tag': 'tag not found'})
+
+    #return tag object
     result = {}
     result['tag_id'] = tag.tag_id
     result['tag_name'] = tag.tag_name
+
     return jsonify(result)
 
 @app.route("/preferences", methods=['GET'])
 @cross_origin()
 @token_required
 def get_preferences(current_user):
+    #get preferences of the current_user
     preferences = Preferences.query.filter_by(user_id=current_user.user_id).all()
     result = []
     for preference in preferences:
@@ -250,12 +263,14 @@ def get_preferences(current_user):
         tag = Tags.query.filter_by(tag_id=preference.tag_id).first()
         preference_data['tag_name'] = tag.tag_name
         result.append(preference_data)
+
     return jsonify(result)
  
 @app.route("/preferences", methods=['POST'])
 @cross_origin()
 @token_required
 def post_preference(current_user):
+    #add a new tag to the current_user's preferences
     preference = request.get_json()
     new_preference = Preferences(
         user_id=current_user.user_id,
@@ -265,6 +280,7 @@ def post_preference(current_user):
     db.session.commit()
     db.session.refresh(new_preference)
 
+    #return created preference
     result = {}
     result['preference_id'] = new_preference.preference_id
     result['user_id'] = new_preference.user_id
@@ -277,7 +293,7 @@ def post_preference(current_user):
 @app.route("/discussions/<tag_id>", methods=['GET'])
 @cross_origin()
 def get_discussionlist_by_tag(tag_id):
-    #return list of discussion by tagid
+    #get list of discussion of certain tag
     discussions = Discussions.query.filter_by(tag_id=tag_id).all()
     result = []
     for discussion in discussions:
@@ -290,6 +306,7 @@ def get_discussionlist_by_tag(tag_id):
         discussion_data['title'] = discussion.title
         discussion_data['description'] = discussion.description
         result.append(discussion_data)
+
     return jsonify(result)
 
 @app.route("/discussion/<discussion_id>", methods=['GET'])
@@ -309,6 +326,7 @@ def get_discussion_by_id(discussion_id):
     result['description'] = discussion.description
     result['comments'] = []
 
+    #get the comments of this discussion
     comments = Comments.query.filter_by(discussion_id=discussion_id).order_by(asc(Comments.date)).all()
     for comment in comments:
         comment_data = {}
@@ -328,10 +346,11 @@ def get_discussion_by_id(discussion_id):
 @cross_origin()
 @token_required
 def post_discussion(current_user):
-    #create new discussion, if tag does not exist, it will be created
+    #create new discussion
     discussion = request.get_json()
     #print(discussion)
     tag = Tags.query.filter_by(tag_name=discussion['tag_name']).first()
+    #if tag does not exist, it is created then
     if tag is None:
         tag = Tags(
             tag_name=discussion['tag_name']
@@ -351,6 +370,7 @@ def post_discussion(current_user):
     db.session.commit()
     db.session.refresh(new_discussion)
 
+    #return discussion object
     result = {}
     result['discussion_id'] = new_discussion.discussion_id
     result['user_id'] = new_discussion.user_id
@@ -359,13 +379,15 @@ def post_discussion(current_user):
     result['tag_id'] = new_discussion.tag_id
     result['title'] = new_discussion.title
     result['description'] = new_discussion.description
-    print(result)
+    #print(result)
+
     return jsonify(result)
 
 @app.route("/discussion/<discussion_id>", methods=['DELETE'])
 @cross_origin()
 @token_required
 def delete_discussion(current_user, discussion_id):
+    #delete discussion created by the current_user
     discussion = Discussions.query.filter_by(discussion_id=discussion_id).first()
     if not discussion:
         return make_response('not found', 404, {'Discussion': 'discussion not found'})
@@ -373,6 +395,7 @@ def delete_discussion(current_user, discussion_id):
         return make_response('Delete prohibited', 401, {'Discussion': 'you are not allowed to delete this'})
     db.session.delete(discussion)
     db.session.commit()
+
     return jsonify({'message': 'successfull delete'})
 
 @app.route("/discussion/<discussion_id>", methods=['POST'])
@@ -381,7 +404,7 @@ def delete_discussion(current_user, discussion_id):
 def post_comment(current_user, discussion_id):
     #add new comment to discussion
     comment = request.get_json()
-    print(comment['date'])
+
     date = datetime.datetime.strptime(comment['date'], "%M/%d/%Y")
     new_comment = Comments(
         user_id=current_user.user_id, #comment['user_id'],
@@ -392,6 +415,8 @@ def post_comment(current_user, discussion_id):
     db.session.add(new_comment)
     db.session.commit()
     db.session.refresh(new_comment)
+
+    #return comment object
     result = {}
     result['comment_id'] = new_comment.comment_id
     result['user_id'] = new_comment.user_id
@@ -400,12 +425,14 @@ def post_comment(current_user, discussion_id):
     result['discussion_id'] = new_comment.discussion_id
     result['date'] = new_comment.date
     result['text'] = new_comment.text
+
     return jsonify(result)
 
 @app.route("/comment/<comment_id>", methods=['DELETE'])
 @cross_origin()
 @token_required
 def delete_comment(current_user, comment_id):
+    #delete comment created by the current_user
     comment = Comments.query.filter_by(comment_id=comment_id).first()
     if not comment:
         return make_response('Comment', 404, {'Comment': 'comment not found'})
@@ -413,6 +440,7 @@ def delete_comment(current_user, comment_id):
         return make_response('Delete prohibited', 401, {'Discussion': 'you are not allowed to delete this'})
     db.session.delete(comment)
     db.session.commit()
+
     return jsonify({'message': 'successfull delete'})
 
 if __name__ == '__main__':
