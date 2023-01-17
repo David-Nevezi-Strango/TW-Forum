@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthenticationService } from '../services/authentication.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -7,16 +9,28 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LoginComponent implements OnInit {
 
-  constructor() { }
+  constructor(private authenticationService:AuthenticationService,private snackbar: MatSnackBar) { }
 
-  email:string=""
+  username:string=""
   password:string=""
 
   ngOnInit(): void {
   }
 
   login(){
-    
+    this.authenticationService.login(this.username,this.password).subscribe({
+      next:data=>{
+        localStorage.setItem("token",data.token)
+        localStorage.setItem("user_id",data.user_id)
+        localStorage.setItem("notification_id",data.last_notification_id)
+        window.location.reload()
+      },
+      error:error=>{
+        this.snackbar.open('Numele de utilizator sau parola sunt incorecte!', '', {
+          duration: 3000
+        });
+      }
+    })
   }
 
 }

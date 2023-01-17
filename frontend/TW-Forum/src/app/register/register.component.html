@@ -12,8 +12,13 @@
         </mat-form-field>
         <br>
         <mat-form-field appearance="fill" style="width:100%">
+            <mat-label>Nume</mat-label>
+            <input matInput [(ngModel)]="name">
+        </mat-form-field>
+        <br>
+        <mat-form-field appearance="fill" style="width:100%">
             <mat-label>Parolă</mat-label>
-            <input matInput [(ngModel)]="password">
+            <input type="password" matInput [(ngModel)]="password">
         </mat-form-field>
     </mat-dialog-content>
 

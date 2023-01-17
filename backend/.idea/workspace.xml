@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1e185878-9683-4154-b136-595733751b64" name="Changes" comment="Connected remotely to Azure MySQL (SSL Disabled)">
+    <list default="true" id="1e185878-9683-4154-b136-595733751b64" name="Changes" comment="Implemented cascade delete">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/script.sql" beforeDir="false" afterPath="$PROJECT_DIR$/script.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,6 +78,26 @@
       <workItem from="1673021363626" duration="50000" />
       <workItem from="1673087356577" duration="1394000" />
       <workItem from="1673090478670" duration="854000" />
+      <workItem from="1673091905512" duration="29000" />
+      <workItem from="1673096094404" duration="2011000" />
+      <workItem from="1673098132305" duration="12000" />
+      <workItem from="1673118189960" duration="3843000" />
+      <workItem from="1673293764646" duration="827000" />
+      <workItem from="1673346181247" duration="25000" />
+      <workItem from="1673423005014" duration="518000" />
+      <workItem from="1673529942132" duration="1019000" />
+      <workItem from="1673544338695" duration="2440000" />
+      <workItem from="1673547388840" duration="4711000" />
+      <workItem from="1673595586804" duration="407000" />
+      <workItem from="1673618860430" duration="69000" />
+      <workItem from="1673619733719" duration="4561000" />
+      <workItem from="1673624411717" duration="568000" />
+      <workItem from="1673625637604" duration="436000" />
+      <workItem from="1673705197350" duration="2297000" />
+      <workItem from="1673707671302" duration="1616000" />
+      <workItem from="1673792487746" duration="2800000" />
+      <workItem from="1673888499836" duration="93000" />
+      <workItem from="1673890372774" duration="197000" />
     </task>
     <task id="LOCAL-00001" summary="First try of backend">
       <created>1670774711951</created>
@@ -133,7 +155,126 @@
       <option name="project" value="LOCAL" />
       <updated>1673088715269</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Disabled SSL between front and backend">
+      <created>1673091674917</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1673091674917</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Fixed mail typo">
+      <created>1673096242876</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1673096242876</updated>
+    </task>
+    <task id="LOCAL-00011" summary="fixed password bug">
+      <created>1673102328834</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1673102328834</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Trial for tokenized login">
+      <created>1673122031820</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1673122031820</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Return user object + token for login">
+      <created>1673544608690</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1673544608690</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Session initialization and removal">
+      <created>1673545652321</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1673545652321</updated>
+    </task>
+    <task id="LOCAL-00015" summary="DELETE discussion &amp; comment; GET notifications">
+      <created>1673551426589</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1673551426589</updated>
+    </task>
+    <task id="LOCAL-00016" summary="GET preferences">
+      <created>1673595981907</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1673595981907</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Bug Fixes + New Discussion Column + Return Comment">
+      <created>1673620925183</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1673620925183</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Error Request responses + token wrapper fix">
+      <created>1673623186568</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1673623186568</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Added username to discussions and comments">
+      <created>1673623937277</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1673623937277</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Added preference POST">
+      <created>1673624959339</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1673624959339</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Handled incorrect or missing login">
+      <created>1673625994426</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1673625994426</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Refactored error messages">
+      <created>1673705489342</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1673705489342</updated>
+    </task>
+    <task id="LOCAL-00023" summary="Fixed POST comment">
+      <created>1673707487302</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1673707487302</updated>
+    </task>
+    <task id="LOCAL-00024" summary="Fixed date for comment">
+      <created>1673709274275</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1673709274275</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Implemented cascade delete">
+      <created>1673793885184</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1673793885184</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -158,10 +299,27 @@
     <MESSAGE value="Fix for POST CORS" />
     <MESSAGE value="Connected remotely to Azure MySQL (SSL Disabled)" />
     <MESSAGE value="Added login" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added login" />
+    <MESSAGE value="Disabled SSL between front and backend" />
+    <MESSAGE value="Fixed mail typo" />
+    <MESSAGE value="fixed password bug" />
+    <MESSAGE value="Trial for tokenized login" />
+    <MESSAGE value="Return user object + token for login" />
+    <MESSAGE value="Session initialization and removal" />
+    <MESSAGE value="DELETE discussion &amp; comment; GET notifications" />
+    <MESSAGE value="GET preferences" />
+    <MESSAGE value="Bug Fixes + New Discussion Column + Return Comment" />
+    <MESSAGE value="Error Request responses + token wrapper fix" />
+    <MESSAGE value="Added username to discussions and comments" />
+    <MESSAGE value="Added preference POST" />
+    <MESSAGE value="Handled incorrect or missing login" />
+    <MESSAGE value="Refactored error messages" />
+    <MESSAGE value="Fixed POST comment" />
+    <MESSAGE value="Fixed date for comment" />
+    <MESSAGE value="Implemented cascade delete" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implemented cascade delete" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/backend$Flask__app_py_.coverage" NAME="Flask (app.py) Coverage Results" MODIFIED="1672842076044" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/backend$backend.coverage" NAME="backend Coverage Results" MODIFIED="1673090568827" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/backend$backend.coverage" NAME="backend Coverage Results" MODIFIED="1673709091575" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>

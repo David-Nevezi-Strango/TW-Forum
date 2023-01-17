@@ -2,10 +2,12 @@ import { Comment } from "./Comment";
 
 export interface Discussion{
     discussion_id:number;
+    user_id:number;
     tag_id:number;
     title:string;
     description:string;
     comments:Comment[]
+    username:string
 
     /*
     constructor(discussion_id:number,tag_id:number,title:string,content:string,comments:Comment[]){

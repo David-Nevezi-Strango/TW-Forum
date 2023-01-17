@@ -7,8 +7,38 @@
 
     <span style="flex: 1 1 auto;"></span>
     <span flex></span>
-    <button mat-raised-button style="background-color:teal;color:white;margin-right:5px" (click)="openLoginDialog()">Autentificare</button>
-    <button mat-raised-button (click)="openRegisterDialog()">Înregistrare</button>
+
+    <span *ngIf="authenticated==false">
+      <button mat-raised-button style="background-color:teal;color:white;margin-right:5px" (click)="openLoginDialog()">Autentificare</button>
+      <button mat-raised-button (click)="openRegisterDialog()">Înregistrare</button>
+    </span>
+
+    <span *ngIf="authenticated==true">
+      <button mat-button [matMenuTriggerFor]="notifications"><mat-icon>notifications</mat-icon></button>
+      <mat-menu #notifications="matMenu">
+        <span style="margin:5px">Notificări</span><br>
+        <mat-divider></mat-divider>
+
+        <div *ngIf="notification_list?.length!>0">
+          <button mat-raised-button color="primary" style="margin:5px" (click)="markAsRead()">Marchează ca citit</button>
+          <mat-divider></mat-divider>
+          <div *ngFor="let n of notification_list">
+            <div style="margin:1vw">
+              <mat-icon>notifications</mat-icon>
+              {{n.text}}<br>
+            </div>
+            <mat-divider></mat-divider>
+          </div>
+        </div>
+
+        <div *ngIf="notification_list?.length==0" style="margin:5px">
+          Nu aveți notificări noi!
+        </div>
+      </mat-menu>
+
+      <button mat-raised-button (click)="logout()">Deconectare</button>
+    </span>
+
   </mat-toolbar> 
 
   <mat-sidenav-container style="width:100%;height:100%">
@@ -17,6 +47,8 @@
       <a routerLink="home">
         <button mat-raised-button color="primary" class="sidenav-button"><mat-icon>home</mat-icon>Home</button>
       </a>
+      <mat-divider></mat-divider>
+      <br>
     </mat-sidenav>
 
     <mat-sidenav-content style="background-color: #B4CFCA;">

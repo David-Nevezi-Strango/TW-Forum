@@ -23,6 +23,22 @@ export class DiscussionService {
   }
 
   addDiscussion(discussion:Object): Observable<Discussion> {
-    return this.http.post<Discussion>(this.url, discussion)
+    let httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'x-access-tokens': 'Bearer ' + localStorage.getItem("token")
+      })
+    };
+    return this.http.post<Discussion>(this.url, discussion,httpOptions)
+  }
+
+  deleteDiscussion(discussion_id:number){
+    let httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'x-access-tokens': 'Bearer ' + localStorage.getItem("token")
+      })
+    };
+    return this.http.delete<Object>(`${this.single_url}/${discussion_id}`,httpOptions)
   }
 }

@@ -7,6 +7,8 @@ import { TagService } from '../services/tag.service';
 import { Tag } from 'src/models/tag';
 import {MatDialog, MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import { AddDiscussionComponent } from '../add-discussion/add-discussion.component';
+import { LoginComponent } from '../login/login.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-discussion',
@@ -15,7 +17,7 @@ import { AddDiscussionComponent } from '../add-discussion/add-discussion.compone
 })
 export class DiscussionComponent implements OnInit {
 
-  constructor(private route: ActivatedRoute,private location: Location,private discussionService:DiscussionService,private tagService:TagService,public dialog: MatDialog) { }
+  constructor(private route: ActivatedRoute,private location: Location,private discussionService:DiscussionService,private tagService:TagService,public dialog: MatDialog,private snackbar:MatSnackBar) { }
 
   tag_id=Number(this.route.snapshot.paramMap.get('id'));
   discussions:Discussion[]=[]
@@ -27,9 +29,20 @@ export class DiscussionComponent implements OnInit {
   }
 
   openDialog(){
-    const dialogRef = this.dialog.open(AddDiscussionComponent, {
+    let token=localStorage.getItem("token")
+    if(token!=null && token!=''){
+      const dialogRef = this.dialog.open(AddDiscussionComponent, {
+        
+      });
+    }
+    else{
+      const dialogRef = this.dialog.open(LoginComponent, {
       
-    });
+      });
+      this.snackbar.open('Trebuie să fiți autentificat pentru a pune o întrebare!', '', {
+        duration: 3000
+      });
+    }
   }
 
   getDiscussions():void{

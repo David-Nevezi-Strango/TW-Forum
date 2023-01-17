@@ -2,6 +2,9 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { AuthenticationService } from './services/authentication.service';
+import { NotificationService } from './services/notification.service';
+import { Notification } from 'src/models/Notification';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +14,25 @@ import { RegisterComponent } from './register/register.component';
 export class AppComponent {
   title = 'TW-Forum';
   opened=false;
-  constructor(public dialog: MatDialog){}
+  authenticated=false
+  notification_list:Notification[]|undefined
+
+  constructor(public dialog: MatDialog,private authenticationService:AuthenticationService,private notificationService:NotificationService){}
+
+  ngOnInit():void{
+    let token=localStorage.getItem("token")
+    if(token!=null && token!=''){
+      this.authenticated=true
+    }
+    else{
+      this.authenticated=false
+    }
+
+    let notification_id_str=localStorage.getItem("notification_id")
+    //console.log(notification_id_str)
+    let notification_id=parseInt(notification_id_str!)
+    this.getNotifications(notification_id)
+  }
 
   openLoginDialog(): void {
     const dialogRef = this.dialog.open(LoginComponent, {
@@ -23,4 +44,17 @@ export class AppComponent {
     });
   }
 
+  logout(){
+    this.authenticationService.logout()
+  }
+
+  getNotifications(id:number){
+    this.notificationService.getNotifications(id).subscribe(response=>{this.notification_list=response;console.log(this.notification_list)})
+  }
+
+  markAsRead(){
+    let notification_id=this.notification_list?.slice(-1)[0].notification_id!
+    this.notificationService.updateNotification(notification_id).subscribe(response=>window.location.reload())
+    localStorage.setItem("notification_id",notification_id.toString())
+  }
 }

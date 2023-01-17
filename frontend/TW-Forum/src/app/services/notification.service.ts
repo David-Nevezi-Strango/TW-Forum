@@ -1,38 +1,33 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { Comment } from 'src/models/Comment';
+import { Observable,of } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Notification } from 'src/models/Notification';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CommentService {
+export class NotificationService {
 
   constructor(private http: HttpClient) { }
-  url="http://localhost:5000/discussion"
-  comment_url="http://localhost:5000/comment"
+  url="http://localhost:5000/notifications"
 
-  getComments(id:number):Observable<Comment[]>{
-    return this.http.get<Comment[]>(`${this.url}/${id}`)
-  }
-
-  addComment(id:number,comment:Object): Observable<Comment> {
+  getNotifications(id:number):Observable<Notification[]>{
     let httpOptions = {
       headers: new HttpHeaders({
         'Content-Type':  'application/json',
         'x-access-tokens': 'Bearer ' + localStorage.getItem("token")
       })
     };
-    return this.http.post<Comment>(`${this.url}/${id}`, comment,httpOptions)
+    return this.http.get<Notification[]>(`${this.url}/${id}`,httpOptions)
   }
 
-  deleteComment(id:number){
+  updateNotification(id:number):Observable<Object>{
     let httpOptions = {
       headers: new HttpHeaders({
         'Content-Type':  'application/json',
         'x-access-tokens': 'Bearer ' + localStorage.getItem("token")
       })
     };
-    return this.http.delete<void>(`${this.comment_url}/${id}`,httpOptions)
+    return this.http.post<Object>(`${this.url}/${id}`,id,httpOptions)
   }
 }
