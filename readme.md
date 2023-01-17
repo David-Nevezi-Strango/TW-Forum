@@ -62,14 +62,16 @@ Runing the app:
 
 - Backend
   At the parent directory of the backend part, run the following commands:
+  
   Windows:
-  `set FLASK_ENV=development`
-  `set FLASK_APP=app`
-  `flask run`
+  - `set FLASK_ENV=development`
+  - `set FLASK_APP=app`
+  - `flask run`
+  
   Unix:
-  `export FLASK_ENV=development`
-  `export FLASK_APP=app`
-  `flask run`
+  - `export FLASK_ENV=development`
+  - `export FLASK_APP=app`
+  - `flask run`
   
 Using the app:
  
