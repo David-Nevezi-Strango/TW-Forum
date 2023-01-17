@@ -18,6 +18,15 @@ Additionally, users may get notifications related to the platform (Ex. Maintenan
 
 Under the hood, Angular, Flask and MySQL was used. An ERD diagram is included below
 
+Tables:
+- blacklisttoken: used to black list web tokens if users logged out before the token would have expired
+- users: used for user account management
+- notifications: used if any message is intended to be sent to users by the developers/maintenance team
+- preferences: used for users to show tags that were of interest at any point
+- tags: used to categorize each discussion. Main purpose is to categorize by university
+- discussions: used to manage discussions
+- comments: used to manage comments
+
 #
 ![ERD diagram](https://user-images.githubusercontent.com/92172532/212942788-c998e778-8c2e-475b-9412-fbeaaee7b136.png)
 
@@ -44,6 +53,7 @@ For backend it is enough if you install a Python 3.x interpreter that has also p
 
 DB: (Optional)
 If you want a local DB or don't have a hosted MySQL server, you can install it from the official MySQL website. (https://www.mysql.com/downloads/)
+You can find within the backend folder an SQL script containing the necessary querries to create the DB.
 
 
 ## Usage
