@@ -1,8 +1,6 @@
-flask~=2.2.2
-pyjwt~=2.6.0
-datetime~=4.7
-uuid
-Flask-SQLAlchemy
+PyJWT~=2.6.0
+DateTime~=4.7
+Flask~=2.2.2
 Werkzeug~=2.2.2
 SQLAlchemy~=1.4.45
 requests~=2.28.1
