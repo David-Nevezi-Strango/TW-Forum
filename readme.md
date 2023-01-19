@@ -44,6 +44,10 @@ Backend:
 DB:
 - MySQL 8.0
 
+Frontend:
+- Angular
+- Node.js
+- Angular Material UI
 
 
 ## Installation
@@ -55,12 +59,16 @@ DB: (Optional)
 If you want a local DB or don't have a hosted MySQL server, you can install it from the official MySQL website. (https://www.mysql.com/downloads/)
 You can find within the backend folder an SQL script containing the necessary querries to create the DB.
 
+Frontend:
+For the frontend, the Angular CLI and Node.js must be installed. Then, to install the dependencies, navigate to frontend/TW-Forum and use the command `npm install`.
+
+
 
 ## Usage
 
-Runing the app:
+Running the app:
 
-- Backend
+- Backend:
   At the parent directory of the backend part, run the following commands:
   
   Windows:
@@ -72,6 +80,9 @@ Runing the app:
   - `export FLASK_ENV=development`
   - `export FLASK_APP=app`
   - `flask run`
+
+- Frontend:
+In the directory frontend/TW-Forum, use the command `ng serve` to start the local server or `ng serve --open` to start the local server and automatically open a browser window with the WebApp.
   
 Using the app:
  
