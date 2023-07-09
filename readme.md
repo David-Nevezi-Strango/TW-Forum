@@ -92,6 +92,7 @@ The WebApp is very user-friendly, intuitive, thus there's no reason to go into d
 ## Credits
 
 Frontend - Vaduva Vlad-Andrei
+
 Backend + DB - Nevezi-Strango David
 
 Some source code were inspired from laboratory materials (https://en.wikiversity.org/wiki/Tehnologii_Web%2F2022-2023)
