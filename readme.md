@@ -96,3 +96,5 @@ Frontend - Vaduva Vlad-Andrei
 Backend + DB - Nevezi-Strango David
 
 Some source code were inspired from laboratory materials (https://en.wikiversity.org/wiki/Tehnologii_Web%2F2022-2023)
+
+For more information, check out the PDF file!
